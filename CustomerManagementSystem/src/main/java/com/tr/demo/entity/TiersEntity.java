@@ -13,7 +13,7 @@ import lombok.*;
 @ToString(onlyExplicitlyIncluded = true)
 @Entity
 @Table(name = "tiers")
-public class TierEntity  extends BaseEntity{
+public class TiersEntity extends BaseEntity{
 
     @Size(max = 50)
     @NotNull

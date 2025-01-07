@@ -16,6 +16,8 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 
+import static com.tr.demo.advice.constants.UserServiceConstants.X_CHANNEL_TYPE;
+
 @Slf4j
 @RequiredArgsConstructor
 @Component
@@ -34,7 +36,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
         if (StringUtils.isNotEmpty(jwtToken) && tokenProvider.validateToken(jwtToken)) {
             final Long id = tokenProvider.extractMemberNoFromToken(jwtToken);
             final String channel = tokenProvider.extractChannelFromToken(jwtToken);
-            final UserPrincipal userPrincipal = customUserDetailsService.loadUserById(id);
+            final CustomerPrincipal userPrincipal = customUserDetailsService.loadUserById(id);
             final UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken
                     = new UsernamePasswordAuthenticationToken(userPrincipal, null, userPrincipal.getAuthorities());
             usernamePasswordAuthenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));

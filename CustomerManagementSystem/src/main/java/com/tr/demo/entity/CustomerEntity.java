@@ -38,7 +38,7 @@ public class CustomerEntity extends BaseAuditableEntity {
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @OnDelete(action = OnDeleteAction.RESTRICT)
     @JoinColumn(name = "tier_id", nullable = false)
-    private TierEntity tiersEntity;
+    private TiersEntity tiersEntity;
 
     @Column(name = "order_count")
     private Integer orderCount;

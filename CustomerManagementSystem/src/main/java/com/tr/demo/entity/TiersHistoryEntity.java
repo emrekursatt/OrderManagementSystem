@@ -33,7 +33,7 @@ public class TiersHistoryEntity extends BaseEntity{
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @OnDelete(action = OnDeleteAction.RESTRICT)
     @JoinColumn(name = "new_tier_id", nullable = false)
-    private TierEntity newTierEntity;
+    private TiersEntity newTiersEntity;
 
     @ColumnDefault("CURRENT_TIMESTAMP")
     @Column(name = "change_date")
