@@ -23,17 +23,17 @@ public class TiersHistoryEntity extends BaseEntity{
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @OnDelete(action = OnDeleteAction.RESTRICT)
     @JoinColumn(name = "customer_id", nullable = false)
-    private CustomerEntity customerEntitiy;
+    private CustomerEntity customerEntity;
 
     @NotNull
     @Column(name = "previous_tier_id", nullable = false)
-    private Integer previousTierEntitiy;
+    private Integer previousTierEntity;
 
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @OnDelete(action = OnDeleteAction.RESTRICT)
     @JoinColumn(name = "new_tier_id", nullable = false)
-    private TierEntity newTierEntitiy;
+    private TierEntity newTierEntity;
 
     @ColumnDefault("CURRENT_TIMESTAMP")
     @Column(name = "change_date")

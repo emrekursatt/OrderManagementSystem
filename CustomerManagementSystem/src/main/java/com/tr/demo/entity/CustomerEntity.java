@@ -43,14 +43,19 @@ public class CustomerEntity extends BaseAuditableEntity {
     @Column(name = "order_count")
     private Integer orderCount;
 
-    @NotNull
-    @Column(name = "created_at", nullable = false)
-    private Long createdAt;
+    @Column(name = "password" )
+    private String password;
 
-    @Column(name = "updated_at")
-    private Long updatedAt;
+    @Column(name = "enabled" , nullable = false )
+    private Boolean enabled;
 
-    @OneToMany(mappedBy = "customerEntitiy")
+    @Column(name = "status" ,nullable = false)
+    private int status;
+
+    @Column(name = "fail_login_count" )
+    private Integer failLoginCount;
+
+    @OneToMany(mappedBy = "customerEntity")
     private Set<TiersHistoryEntity> tiersHistories = new LinkedHashSet<>();
 
 }
