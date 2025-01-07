@@ -1,6 +1,7 @@
 package com.tr.demo.util;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.tr.demo.model.error.Error;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpStatus;
 

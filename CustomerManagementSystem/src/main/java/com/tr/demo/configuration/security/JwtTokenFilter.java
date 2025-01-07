@@ -1,5 +1,6 @@
 package com.tr.demo.configuration.security;
 
+import com.tr.demo.service.CustomUserDetailsService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
