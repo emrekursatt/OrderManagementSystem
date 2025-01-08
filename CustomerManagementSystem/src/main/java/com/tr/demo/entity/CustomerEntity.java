@@ -4,13 +4,14 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-@Builder
+@SuperBuilder
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
@@ -56,6 +57,6 @@ public class CustomerEntity extends BaseAuditableEntity {
     private Integer failLoginCount;
 
     @OneToMany(mappedBy = "customerEntity")
-    private Set<TiersHistoryEntity> tiersHistories = new LinkedHashSet<>();
+    private Set<TiersHistoryEntity> tiersHistories;
 
 }

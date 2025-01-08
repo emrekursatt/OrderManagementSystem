@@ -1,15 +1,15 @@
 ###### Server port ########
 server:
   port: 6060  # ${SERVICE_PORT}
-  servlet:
-    context-path: /auth
-###### Spring configs ########
 
 spring:
+  cloud:
+    config:
+      enabled: false
   datasource:
-    url: jdbc:postgresql://resumepr.c1um6wegknn9.eu-north-1.rds.amazonaws.com:5432/user_information_service
+    url: jdbc:postgresql://localhost:5432/postgres
     username: postgres
-    password: Becareer_2024
+    password: 2875
     hikari:
       maximum-pool-size: 10
       minimum-idle: 5
@@ -22,7 +22,7 @@ spring:
       hibernate:
         hbm2ddl:
           auto: none
-        default_schema: public
+        default_schema: customer_service
     show-sql: true
 
 springdoc:

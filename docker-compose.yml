@@ -1,0 +1,20 @@
+version: '3.1'
+services:
+  postgres:
+    image: postgres:17
+    container_name: customer_service_postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 2875
+      POSTGRES_DB: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - customer_service_network
+    restart: unless-stopped
+volumes:
+  postgres_data:
+networks:
+  customer_service_network:
