@@ -4,12 +4,12 @@ import com.tr.demo.advice.constants.ErrorCodes;
 import lombok.Getter;
 
 @Getter
-public class UserIsBlockedException extends RuntimeException {
+public class CustomerIsBlockedException extends RuntimeException {
 
     private final int code;
 
-    public UserIsBlockedException() {
+    public CustomerIsBlockedException() {
         super("User is blocked!");
-        this.code = ErrorCodes.USER_BLOCKED;
+        this.code = ErrorCodes.CUSTOMER_BLOCKED;
     }
 }

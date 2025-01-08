@@ -46,7 +46,7 @@ public class CustomUserDetailsService implements UserDetailsService {
         Boolean enabled = usersEntity.getEnabled();
 
         if (enabled == null || !enabled) {
-            throw new UserNotEnabledException();
+            throw new CustomerNotEnabledException();
         }
         if (CustomerStatusEnums.isPasswordChangeRequiredForSecurity(status)) {
             throw new PasswordChangeSecurityRequiredException();
@@ -55,10 +55,10 @@ public class CustomUserDetailsService implements UserDetailsService {
             throw new PasswordChangeRequiredException();
         }
         if (CustomerStatusEnums.BLOCKED.getStatus().equals(status)) {
-            throw new UserIsBlockedException();
+            throw new CustomerIsBlockedException();
         }
         if (!CustomerStatusEnums.isUserActive(status)) {
-            throw new UserNotActiveException(status);
+            throw new CustomerNotActiveException(status);
         }
     }
 }

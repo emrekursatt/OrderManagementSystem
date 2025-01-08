@@ -10,6 +10,6 @@ public class PasswordSameWithIdException extends RuntimeException {
 
     public PasswordSameWithIdException() {
         super("Password can not be same with user id");
-        this.code = ErrorCodes.PASSWORD_USER_ID_SAME;
+        this.code = ErrorCodes.PASSWORD_CUSTOMER_ID_SAME;
     }
 }

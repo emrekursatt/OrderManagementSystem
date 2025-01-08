@@ -1,6 +1,6 @@
 package com.tr.demo.service;
 
-import com.tr.demo.advice.exception.UserAlreadyRegisteredException;
+import com.tr.demo.advice.exception.CustomerAlreadyRegisteredException;
 import com.tr.demo.entity.CustomerEntity;
 import com.tr.demo.entity.TiersEntity;
 import com.tr.demo.model.enums.CustomerStatusEnums;
@@ -59,7 +59,7 @@ public class RegistrationService {
         customerEntityRepository
                 .findByUsername(userName)
                 .ifPresent(userEntity -> {
-                    throw new UserAlreadyRegisteredException();
+                    throw new CustomerAlreadyRegisteredException();
                 });
     }
 }

@@ -1,7 +1,7 @@
 package com.tr.demo.service;
 
 import com.tr.demo.advice.exception.ChangePasswordMismatchException;
-import com.tr.demo.advice.exception.NoSuchUserException;
+import com.tr.demo.advice.exception.NoSuchCustomerException;
 import com.tr.demo.advice.exception.PasswordSameWithIdException;
 import com.tr.demo.advice.exception.ResetPasswordStatusException;
 import com.tr.demo.entity.CustomerEntity;
@@ -31,7 +31,7 @@ public class PasswordService {
 
     @Transactional
     public void changePassword(CustomerPrincipal principal, ChangePasswordRequest changePasswordRequest) {
-        CustomerEntity usersEntity = customerEntityRepository.findById(principal.getId()).orElseThrow(NoSuchUserException::new);
+        CustomerEntity usersEntity = customerEntityRepository.findById(principal.getId()).orElseThrow(NoSuchCustomerException::new);
         assertUserStatus(usersEntity.getStatus());
         PasswordUtil.assertPasswordIsValid(changePasswordRequest.getNewPassword());
         if (String.valueOf(principal.getId()).equalsIgnoreCase(changePasswordRequest.getNewPassword())) {

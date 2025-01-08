@@ -4,12 +4,12 @@ import com.tr.demo.advice.constants.ErrorCodes;
 import lombok.Getter;
 
 @Getter
-public class UserNotEnabledException extends RuntimeException {
+public class CustomerNotEnabledException extends RuntimeException {
 
     private final int code;
 
-    public UserNotEnabledException() {
+    public CustomerNotEnabledException() {
         super("User is not enabled!");
-        this.code = ErrorCodes.NOT_ENABLED_USER;
+        this.code = ErrorCodes.NOT_ENABLED_CUSTOMER;
     }
 }

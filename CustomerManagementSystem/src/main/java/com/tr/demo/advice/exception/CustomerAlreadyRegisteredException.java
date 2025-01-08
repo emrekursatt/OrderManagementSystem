@@ -4,12 +4,12 @@ import com.tr.demo.advice.constants.ErrorCodes;
 import lombok.Getter;
 
 @Getter
-public class UserAlreadyRegisteredException extends RuntimeException {
+public class CustomerAlreadyRegisteredException extends RuntimeException {
 
     private final int code;
 
-    public UserAlreadyRegisteredException() {
+    public CustomerAlreadyRegisteredException() {
         super("User already registered with given customer id");
-        this.code = ErrorCodes.USER_ALREADY_REGISTERED;
+        this.code = ErrorCodes.CUSTOMER_ALREADY_REGISTERED;
     }
 }

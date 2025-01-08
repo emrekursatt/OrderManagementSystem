@@ -5,12 +5,12 @@ import com.tr.demo.model.enums.CustomerStatusEnums;
 import lombok.Getter;
 
 @Getter
-public class UserNotActiveException extends RuntimeException {
+public class CustomerNotActiveException extends RuntimeException {
 
     private final int code;
 
-    public UserNotActiveException(int userStatus) {
+    public CustomerNotActiveException(int userStatus) {
         super("User is not active. Current user status : " + CustomerStatusEnums.fromValue(userStatus));
-        this.code = ErrorCodes.NOT_ACTIVE_USER;
+        this.code = ErrorCodes.NOT_ACTIVE_CUSTOMER;
     }
 }

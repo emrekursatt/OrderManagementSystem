@@ -63,21 +63,21 @@ public class AuthenticationAdvice {
                 .body(constructError(e.getCode(), e.getMessage()));
     }
 
-    @ExceptionHandler(NoSuchUserException.class)
-    public ResponseEntity<Error> handleException(NoSuchUserException e) {
+    @ExceptionHandler(NoSuchCustomerException.class)
+    public ResponseEntity<Error> handleException(NoSuchCustomerException e) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
                 .body(constructError(e.getCode(), e.getMessage()));
     }
 
-    @ExceptionHandler(UserAlreadyRegisteredException.class)
-    public ResponseEntity<Error> handleException(UserAlreadyRegisteredException e) {
+    @ExceptionHandler(CustomerAlreadyRegisteredException.class)
+    public ResponseEntity<Error> handleException(CustomerAlreadyRegisteredException e) {
         return ResponseEntity.status(HttpStatus.CONFLICT)
                 .body(constructError(e.getCode(), e.getMessage()));
     }
 
 
-    @ExceptionHandler(UserNotActiveException.class)
-    public ResponseEntity<Error> handleException(UserNotActiveException e) {
+    @ExceptionHandler(CustomerNotActiveException.class)
+    public ResponseEntity<Error> handleException(CustomerNotActiveException e) {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                 .body(constructError(e.getCode(), e.getMessage()));
     }
@@ -93,7 +93,7 @@ public class AuthenticationAdvice {
     @ExceptionHandler(UsernameNotFoundException.class)
     public ResponseEntity<Error> handleException(UsernameNotFoundException e) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(constructError(ErrorCodes.NO_SUCH_USER, e.getMessage()));
+                .body(constructError(ErrorCodes.NO_SUCH_CUSTOMER, e.getMessage()));
     }
 
 
@@ -133,14 +133,14 @@ public class AuthenticationAdvice {
                 .body(constructError(e.getCode(), e.getMessage()));
     }
 
-    @ExceptionHandler(UserIsBlockedException.class)
-    public ResponseEntity<Error> handleException(UserIsBlockedException e) {
+    @ExceptionHandler(CustomerIsBlockedException.class)
+    public ResponseEntity<Error> handleException(CustomerIsBlockedException e) {
         return ResponseEntity.status(HttpStatus.FORBIDDEN)
-                .body(constructError(ErrorCodes.USER_BLOCKED, e.getMessage()));
+                .body(constructError(ErrorCodes.CUSTOMER_BLOCKED, e.getMessage()));
     }
 
-    @ExceptionHandler(UserIsNotActiveException.class)
-    public ResponseEntity<Error> handleException(UserIsNotActiveException e) {
+    @ExceptionHandler(CustomerIsNotActiveException.class)
+    public ResponseEntity<Error> handleException(CustomerIsNotActiveException e) {
         return ResponseEntity.status(HttpStatus.CONFLICT)
                 .body(constructError(e.getCode(), e.getMessage()));
     }
@@ -148,10 +148,10 @@ public class AuthenticationAdvice {
     @ExceptionHandler(InternalAuthenticationServiceException.class)
     public ResponseEntity<Error> handleException(InternalAuthenticationServiceException e) {
         final Throwable cause = e.getCause();
-        if (cause instanceof UserNotActiveException) {
-            final UserNotActiveException userNotActiveException = (UserNotActiveException) cause;
+        if (cause instanceof CustomerNotActiveException) {
+            final CustomerNotActiveException customerNotActiveException = (CustomerNotActiveException) cause;
             return ResponseEntity.status(HttpStatus.FORBIDDEN)
-                    .body(constructError(ErrorCodes.NOT_ACTIVE_USER, userNotActiveException.getMessage()));
+                    .body(constructError(ErrorCodes.NOT_ACTIVE_CUSTOMER, customerNotActiveException.getMessage()));
         } else if (cause instanceof InvalidAuthTypeException) {
             final InvalidAuthTypeException invalidAuthTypeException = (InvalidAuthTypeException) cause;
             return ResponseEntity.status(HttpStatus.FORBIDDEN)
@@ -164,19 +164,19 @@ public class AuthenticationAdvice {
             final PasswordChangeSecurityRequiredException securityRequiredException = (PasswordChangeSecurityRequiredException) cause;
             return ResponseEntity.status(HttpStatus.FORBIDDEN)
                     .body(constructError(ErrorCodes.PASSWORD_CHANGE_REQUIRED_SEC, securityRequiredException.getMessage()));
-        } else if (cause instanceof UserIsBlockedException) {
-            final UserIsBlockedException securityRequiredException = (UserIsBlockedException) cause;
+        } else if (cause instanceof CustomerIsBlockedException) {
+            final CustomerIsBlockedException securityRequiredException = (CustomerIsBlockedException) cause;
             return ResponseEntity.status(HttpStatus.FORBIDDEN)
-                    .body(constructError(ErrorCodes.USER_BLOCKED, securityRequiredException.getMessage()));
+                    .body(constructError(ErrorCodes.CUSTOMER_BLOCKED, securityRequiredException.getMessage()));
         }
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(constructError(ErrorCodes.UNKNOWN_ERROR, e.getMessage()));
     }
 
-    @ExceptionHandler(UserNotEnabledException.class)
-    public ResponseEntity<Error> handleException(UserNotEnabledException e) {
+    @ExceptionHandler(CustomerNotEnabledException.class)
+    public ResponseEntity<Error> handleException(CustomerNotEnabledException e) {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                .body(constructError(ErrorCodes.NOT_ENABLED_USER, e.getMessage()));
+                .body(constructError(ErrorCodes.NOT_ENABLED_CUSTOMER, e.getMessage()));
     }
 
     private Error constructError(final int code, final String message) {
