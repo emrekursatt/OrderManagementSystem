@@ -24,14 +24,14 @@ public class CustomUserDetailsService implements UserDetailsService {
     @Transactional
     public UserDetails loadUserByUsername(final String value) throws UsernameNotFoundException {
         final CustomerEntity byCustomerId = customerEntityRepository.findByUsername(value)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found with username : " + value));
+                .orElseThrow(() -> new UsernameNotFoundException("Customer not found with username : " + value));
         return createPrincipal(byCustomerId);
     }
 
     @Transactional
     public CustomerPrincipal loadUserById(final Long id) {
         CustomerEntity usersEntity = customerEntityRepository.findById(id)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found with id : " + id));
+                .orElseThrow(() -> new UsernameNotFoundException("Customer not found with id : " + id));
         return CustomerPrincipal.constructCustomerPrincipal(usersEntity);
     }
 
