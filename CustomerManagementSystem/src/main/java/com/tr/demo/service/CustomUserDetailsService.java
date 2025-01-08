@@ -32,11 +32,11 @@ public class CustomUserDetailsService implements UserDetailsService {
     public CustomerPrincipal loadUserById(final Long id) {
         CustomerEntity usersEntity = customerEntityRepository.findById(id)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found with id : " + id));
-        return CustomerPrincipal.constructUserPrincipal(usersEntity);
+        return CustomerPrincipal.constructCustomerPrincipal(usersEntity);
     }
 
     private UserDetails createPrincipal(final CustomerEntity usersEntity) {
-        final CustomerPrincipal userPrincipal = CustomerPrincipal.constructUserPrincipal(usersEntity);
+        final CustomerPrincipal userPrincipal = CustomerPrincipal.constructCustomerPrincipal(usersEntity);
         assertUserStatusIsAllowed(usersEntity);
         return userPrincipal;
     }

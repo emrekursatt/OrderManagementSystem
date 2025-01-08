@@ -22,18 +22,18 @@ public class CustomerPrincipal  implements UserDetails {
     private String username;
     @JsonIgnore
     private String password;
-    private CustomerStatusEnums userStatus;
+    private CustomerStatusEnums customerStatus;
     private Integer failLoginCount;
     private Collection<? extends GrantedAuthority> authorities;
     private boolean enabled;
     private String email;
 
-    public static CustomerPrincipal constructUserPrincipal(final CustomerEntity customerEntity) {
+    public static CustomerPrincipal constructCustomerPrincipal(final CustomerEntity customerEntity) {
         return CustomerPrincipal.builder()
                 .id(customerEntity.getId())
                 .username(customerEntity.getUsername())
                 .password(customerEntity.getPassword())
-                .userStatus(CustomerStatusEnums.fromValue(customerEntity.getStatus()))
+                .customerStatus(CustomerStatusEnums.fromValue(customerEntity.getStatus()))
                 .failLoginCount(customerEntity.getFailLoginCount())
                 .authorities(Collections.emptyList())
                 .enabled(customerEntity.getEnabled())

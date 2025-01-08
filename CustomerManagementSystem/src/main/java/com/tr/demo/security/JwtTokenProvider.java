@@ -47,30 +47,29 @@ public class JwtTokenProvider {
     }
 
     public String generateToken(final Authentication authentication) {
-        final CustomerPrincipal userPrincipal = (CustomerPrincipal) authentication.getPrincipal();
-        String token = getAccessToken(userPrincipal.getId(), populateClaims(userPrincipal));
+        final CustomerPrincipal customerPrincipal = (CustomerPrincipal) authentication.getPrincipal();
+        String token = getAccessToken(customerPrincipal.getId(), populateClaims(customerPrincipal));
 
-        // UserPrincipal bilgilerini JSON formatında Redis'e kaydet
-        saveUserPrincipalInRedis(userPrincipal);
+        saveCustomerPrincipalInRedis(customerPrincipal);
 
         return token;
     }
 
-    private void saveUserPrincipalInRedis(CustomerPrincipal userPrincipal) {
+    private void saveCustomerPrincipalInRedis(CustomerPrincipal customerPrincipal) {
         try {
-            String userKey = "user:" + userPrincipal.getId();
+            String customerKey = "user:" + customerPrincipal.getId();
 
             // JSON formatına dönüştür ve Redis'e kaydet
-            String userPrincipalJson = objectMapper.writeValueAsString(Map.of(
-                    "userId", userPrincipal.getId(),
-                    "status", userPrincipal.getUserStatus(),
-                    "username", userPrincipal.getUsername(),
-                    "email", userPrincipal.getEmail(),
-                    "enabled", userPrincipal.isEnabled()
+            String customerPrincipalJson = objectMapper.writeValueAsString(Map.of(
+                    "userId", customerPrincipal.getId(),
+                    "status", customerPrincipal.getCustomerStatus(),
+                    "username", customerPrincipal.getUsername(),
+                    "email", customerPrincipal.getEmail(),
+                    "enabled", customerPrincipal.isEnabled()
             ));
 
             // Redis’e kaydetme işlemi
-            redisTemplate.opsForValue().set(userKey, userPrincipalJson, jwtProperties.getJwtExpirationInMs(), TimeUnit.MILLISECONDS);
+            redisTemplate.opsForValue().set(customerKey, customerPrincipalJson, jwtProperties.getJwtExpirationInMs(), TimeUnit.MILLISECONDS);
 
         } catch (Exception e) {
             throw new RuntimeException("Failed to serialize  CustomerPrincipal", e);
@@ -91,18 +90,18 @@ public class JwtTokenProvider {
         return token;
     }
 
-    public String generateRefreshToken(final CustomerPrincipal userPrincipal) {
+    public String generateRefreshToken(final CustomerPrincipal customerPrincipal) {
         final String refreshToken = RandomStringUtils.randomAlphanumeric(40);
         final Date refreshTokenExpiryDate = new Date(new Date().getTime() + jwtProperties.getJwtRefreshExpirationInMs());
-        final String tokenKey = getRefreshTokenKey(userPrincipal.getId());
+        final String tokenKey = getRefreshTokenKey(customerPrincipal.getId());
         redisTemplate.opsForValue().set(tokenKey, refreshToken, refreshTokenExpiryDate.getTime(), TimeUnit.MILLISECONDS);
         return refreshToken;
     }
 
-    public Claims populateClaims(CustomerPrincipal userPrincipal) {
-        Claims claims = Jwts.claims().setSubject(Long.toString(userPrincipal.getId()));
-        claims.put(SCOPES, userPrincipal.getAuthorities().stream().map(Object::toString).collect(Collectors.toList()));
-        claims.put(STATUS, userPrincipal.getUserStatus());
+    public Claims populateClaims(CustomerPrincipal customerPrincipal) {
+        Claims claims = Jwts.claims().setSubject(Long.toString(customerPrincipal.getId()));
+        claims.put(SCOPES, customerPrincipal.getAuthorities().stream().map(Object::toString).collect(Collectors.toList()));
+        claims.put(STATUS, customerPrincipal.getCustomerStatus());
         return claims;
     }
 
