@@ -26,8 +26,12 @@ public class CustomerController {
     private final CustomerService customerService;
 
     @GetMapping("/{username}")
-    public ResponseEntity<UserAllResponse> getUserByUserName(@PathVariable String username) {
-        return ResponseEntity.ok(customerService.getUserByUserName(username));
+    public ResponseEntityWrapper<UserAllResponse> getUserByUserName(@PathVariable String username) {
+        BaseResponse<UserAllResponse> baseResponse = new BaseResponse<>();
+        UserAllResponse userByUserName = customerService.getUserByUserName(username);
+        baseResponse.setData(userByUserName);
+        baseResponse.setMessage("User found successfully");
+        return new ResponseEntityWrapper<>(baseResponse, HttpStatus.OK);
     }
 
 
@@ -40,7 +44,7 @@ public class CustomerController {
         registrationService.registerUser(registerRequest, userPrincipal);
         baseResponse.setData(registrationService.registerUser(registerRequest, userPrincipal));
         baseResponse.setMessage("Customer registered successfully");
-        return new ResponseEntityWrapper<>(baseResponse);
+        return new ResponseEntityWrapper<>(baseResponse, HttpStatus.OK);
     }
 
 

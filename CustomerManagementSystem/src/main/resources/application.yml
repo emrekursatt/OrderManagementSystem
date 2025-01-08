@@ -24,6 +24,13 @@ spring:
           auto: none
         default_schema: customer_service
     show-sql: true
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: admin
+    password: admin
+
+
 
 springdoc:
   api-docs:
