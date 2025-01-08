@@ -1,4 +1,4 @@
-package com.tr.demo.configuration.security;
+package com.tr.demo.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tr.demo.configuration.properties.JwtProperties;
@@ -31,7 +31,6 @@ import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 public class JwtTokenProvider {
 
     private static final String SCOPES = "scopes";
-    private static final String UUID = "uniqueCode";
     private static final String STATUS = "status";
 
     private final JwtProperties jwtProperties;

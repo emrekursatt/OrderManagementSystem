@@ -1,4 +1,4 @@
-package com.tr.demo.configuration.security;
+package com.tr.demo.security;
 
 import com.tr.demo.service.CustomUserDetailsService;
 import jakarta.servlet.FilterChain;

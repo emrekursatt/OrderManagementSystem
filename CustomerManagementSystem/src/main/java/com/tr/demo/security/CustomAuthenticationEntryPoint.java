@@ -1,4 +1,4 @@
-package com.tr.demo.configuration.security;
+package com.tr.demo.security;
 
 import com.tr.demo.advice.constants.ErrorCodes;
 import com.tr.demo.model.error.Error;

@@ -30,7 +30,7 @@ springdoc:
     path: /v3/api-docs
   swagger-ui:
     path: /swagger-ui.html
-    url: http://localhost/auth/v3/api-docs
+    url: http://localhost:6060/v3/api-docs
 
 security:
   jwt-expiration-in-ms: 1200000

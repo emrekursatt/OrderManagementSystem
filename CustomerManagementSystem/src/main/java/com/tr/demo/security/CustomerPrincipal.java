@@ -1,4 +1,4 @@
-package com.tr.demo.configuration.security;
+package com.tr.demo.security;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.tr.demo.entity.CustomerEntity;
@@ -12,7 +12,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Objects;
-import java.util.UUID;
 
 @Getter
 @Setter

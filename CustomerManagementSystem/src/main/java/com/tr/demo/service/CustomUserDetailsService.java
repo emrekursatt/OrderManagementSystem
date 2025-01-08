@@ -1,7 +1,7 @@
 package com.tr.demo.service;
 
 import com.tr.demo.advice.exception.*;
-import com.tr.demo.configuration.security.CustomerPrincipal;
+import com.tr.demo.security.CustomerPrincipal;
 import com.tr.demo.entity.CustomerEntity;
 import com.tr.demo.model.enums.CustomerStatusEnums;
 import com.tr.demo.repository.CustomerEntityRepository;

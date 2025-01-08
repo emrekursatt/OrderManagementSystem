@@ -1,4 +1,4 @@
-package com.tr.demo.configuration.security;
+package com.tr.demo.security;
 
 import lombok.Builder;
 import lombok.Getter;

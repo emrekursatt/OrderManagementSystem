@@ -1,5 +1,7 @@
 package com.tr.demo.configuration.security;
 
+import com.tr.demo.security.CustomAuthenticationEntryPoint;
+import com.tr.demo.security.JwtTokenFilter;
 import com.tr.demo.service.CustomUserDetailsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -53,9 +55,9 @@ public class SecurityConfiguration {
         http
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/login/**", "/refresh/**", "/preferences/id/**",
-                                "/validate/**", "api/v1/user/reset-password/**", "/actuator/health", "/api/v1/user/user-register",
+                                "/validate/**", "api/v1/customer/reset-password/**", "/actuator/health", "/api/v1/customer/customer-register",
                                 "/actuator/**",  "/configuration/**","/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html","/webjars/**" ,
-                                "/auth/v3/api-docs/**", "/auth/swagger-ui/**", "/auth/swagger-ui.html")
+                                "/customer/v3/api-docs/**", "/customer/swagger-ui/**", "/customer/swagger-ui.html")
                         .permitAll()
                         .anyRequest()
                         .authenticated()
