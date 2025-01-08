@@ -13,7 +13,11 @@ import org.springframework.http.ResponseEntity;
 public class ResponseEntityWrapper <T> {
     private ResponseEntity<BaseResponse<T>> responseEntity;
 
-    public ResponseEntityWrapper(BaseResponse<T> baseResponse, HttpStatus status) {
-        this.responseEntity = ResponseEntity.status(status).body(baseResponse);
+    public ResponseEntityWrapper(BaseResponse<T> baseResponse) {
+        if (baseResponse.getData() == null) {
+            this.responseEntity = ResponseEntity.status(HttpStatus.BAD_REQUEST).body(baseResponse);
+        }else {
+            this.responseEntity = ResponseEntity.status(HttpStatus.OK).body(baseResponse);
+        }
     }
 }

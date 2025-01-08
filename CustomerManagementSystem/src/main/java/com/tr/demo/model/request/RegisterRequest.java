@@ -18,4 +18,6 @@ public class RegisterRequest {
     private String password;
     @Email
     private String email;
+    private String name;
+
 }
