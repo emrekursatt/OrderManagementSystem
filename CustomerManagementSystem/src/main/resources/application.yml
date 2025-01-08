@@ -1,0 +1,43 @@
+###### Server port ########
+server:
+  port: 6060  # ${SERVICE_PORT}
+  servlet:
+    context-path: /auth
+###### Spring configs ########
+
+spring:
+  datasource:
+    url: jdbc:postgresql://resumepr.c1um6wegknn9.eu-north-1.rds.amazonaws.com:5432/user_information_service
+    username: postgres
+    password: Becareer_2024
+    hikari:
+      maximum-pool-size: 10
+      minimum-idle: 5
+      idle-timeout: 30000
+      connection-timeout: 20000
+      max-lifetime: 1800000
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    properties:
+      hibernate:
+        hbm2ddl:
+          auto: none
+        default_schema: public
+    show-sql: true
+
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    url: http://localhost/auth/v3/api-docs
+
+security:
+  jwt-expiration-in-ms: 1200000
+  jwt-secret: order-management-2024-new-secret-key-project
+  jwt-refresh-expiration-in-ms: 1200000
+
+logging:
+  level:
+    org.springframework.data.redis: DEBUG
+    io.lettuce.core: DEBUG
