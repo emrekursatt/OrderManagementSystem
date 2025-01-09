@@ -9,7 +9,7 @@ public class NoSuchCustomerException extends RuntimeException {
     private final int code;
 
     public NoSuchCustomerException() {
-        super("No Such User!");
+        super("No Such Customer!");
         this.code = ErrorCodes.NO_SUCH_CUSTOMER;
     }
 }

@@ -61,7 +61,7 @@ public class AuthenticationFilter extends AbstractGatewayFilterFactory<Authentic
                     return this.onError(exchange, "Invalid token format", HttpStatus.UNAUTHORIZED);
                 }
             }
-            // Token doğrulama işlemini AuthService'e delege et
+            // Token doğrulama işlemini Customer Service'e delege et
             return validateTokenWithAuthService(token, exchange)
                     .then(chain.filter(exchange)); // Doğrulama başarılı ise request'i devam ettir
         };

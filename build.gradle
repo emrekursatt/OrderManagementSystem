@@ -71,7 +71,6 @@ allprojects {
         implementation libs.feignCore
         implementation libs.eurekaClient
         implementation libs.cloudStarterConfig
-
     }
 }
 

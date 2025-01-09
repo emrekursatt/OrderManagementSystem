@@ -28,7 +28,7 @@ public class GlobalExceptionHandler {
                 .body(constructError(ErrorCodes.NOT_FOUND, e.getMessage()));
     }
 
-    @ExceptionHandler(ResourceNotFoundException.class)
+    @ExceptionHandler(BusinessLogicException.class)
     public ResponseEntity<Object> handleBusinessLogicException(BusinessLogicException e) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(constructError(ErrorCodes.NOT_FOUND, e.getMessage()));

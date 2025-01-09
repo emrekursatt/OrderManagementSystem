@@ -9,6 +9,8 @@ import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Objects;
@@ -16,8 +18,9 @@ import java.util.Objects;
 @Getter
 @Setter
 @Builder
-public class CustomerPrincipal  implements UserDetails {
-
+public class CustomerPrincipal  implements UserDetails , Serializable {
+    @Serial
+    private static final long serialVersionUID = 1L;
     private Long id;
     private String username;
     @JsonIgnore
@@ -29,6 +32,7 @@ public class CustomerPrincipal  implements UserDetails {
     private String email;
     private Integer orderCount;
     private Double discountRate;
+    private String customerName;
 
     public static CustomerPrincipal constructCustomerPrincipal(final CustomerEntity customerEntity) {
         return CustomerPrincipal.builder()
@@ -42,6 +46,7 @@ public class CustomerPrincipal  implements UserDetails {
                 .email(customerEntity.getEmail())
                 .orderCount(customerEntity.getOrderCount())
                 .discountRate(customerEntity.getTiersEntity().getDiscountRate())
+                .customerName(customerEntity.getName())
                 .build();
     }
 

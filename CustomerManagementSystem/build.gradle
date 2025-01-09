@@ -6,4 +6,5 @@ dependencies {
     implementation libs.eurekaClient
     implementation libs.springBootAdminClientWeb
     implementation libs.swaggerApi
+    implementation libs.springAmqp
 }

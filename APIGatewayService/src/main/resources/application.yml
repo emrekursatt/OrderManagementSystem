@@ -16,6 +16,8 @@ spring:
     config:
       enabled: false
     gateway:
+      default-filters:
+        - PreserveHostHeader=true
       discovery:
         locator:
           enabled: true

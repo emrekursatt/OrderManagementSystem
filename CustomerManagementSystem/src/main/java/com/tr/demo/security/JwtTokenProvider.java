@@ -66,8 +66,9 @@ public class JwtTokenProvider {
                     "username", customerPrincipal.getUsername(),
                     "email", customerPrincipal.getEmail(),
                     "enabled", customerPrincipal.isEnabled(),
-                    "orderCount" , customerPrincipal.getOrderCount(),
-                    "discountRate", customerPrincipal.getDiscountRate()
+                    "orderCount" , customerPrincipal.getOrderCount() == null ? 0 : customerPrincipal.getOrderCount(),
+                    "discountRate", customerPrincipal.getDiscountRate(),
+                    "customerName" , customerPrincipal.getCustomerName()
             ));
 
             // Redis’e kaydetme işlemi

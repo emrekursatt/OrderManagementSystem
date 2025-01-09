@@ -6,7 +6,7 @@ import lombok.Data;
 @Data
 @Builder
 public class CustomerPrincipalModel {
-    private String customerId;
+    private Long customerId;
     private String customerName;
     private String username;
     private String email;

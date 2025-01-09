@@ -24,7 +24,7 @@ ext {
             webFlux                   : "3.2.5",
             webFluxUi                 : "2.6.0",
             postgres                    : "42.7.4",
-            mapstruct                   : "1.5.5.Final",
+            springAmqp                 : "3.3.3",
 
     ]
 }
@@ -63,7 +63,7 @@ ext.libs = [
         postgres                          : "org.postgresql:postgresql:$versions.postgres",
         cloudConfigServer                 : "org.springframework.cloud:spring-cloud-config-server:$versions.springCloud",
         cloudStarterConfig                : "org.springframework.cloud:spring-cloud-starter-config:$versions.springCloud",
-        mapstruct                         : "org.mapstruct:mapstruct:$versions.mapstruct",
-        mapstructProcessor                : "org.mapstruct:mapstruct-processor:$versions.mapstruct"
+        springAmqp                        : "org.springframework.boot:spring-boot-starter-amqp:$versions.springAmqp",
 
 ]
+

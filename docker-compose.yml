@@ -9,7 +9,7 @@ services:
     ports:
       - "6379:6379"
     networks:
-      - customer_service_network
+      - service_network
 
   rabbitmq:
     image: rabbitmq:3-management
@@ -20,6 +20,8 @@ services:
     environment:
       RABBITMQ_DEFAULT_USER: admin
       RABBITMQ_DEFAULT_PASS: admin
+    networks:
+      - service_network
 
   postgres:
     image: postgres:17
@@ -32,13 +34,13 @@ services:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
-      - ./init.sql:/docker-entrypoint-initdb.d/init_customer.sql:ro
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql:ro
     networks:
-      - customer_service_network
+      - service_network
     restart: unless-stopped
 
 
 volumes:
   postgres_data:
 networks:
-  customer_service_network:
+  service_network:

@@ -50,4 +50,11 @@ public class CustomerService {
                 .status(CustomerStatusEnums.fromValue(usersEntity.getStatus()).name())
                 .build();
     }
+
+    public void incrementOrderCount(Long customerId) {
+        CustomerEntity customer = customerEntityRepository.findById(customerId)
+                .orElseThrow(NoSuchCustomerException::new);
+        customer.setOrderCount(customer.getOrderCount() + 1);
+        customerEntityRepository.save(customer);
+    }
 }
