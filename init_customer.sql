@@ -78,6 +78,88 @@ ALTER TABLE IF EXISTS customer_service.tiers_history
     OWNER to postgres;
 
 
-INSERT INTO customer_service.tiers(
-    name, required_orders, discount_rate)
-VALUES ("Regular", ?, ?);
+
+CREATE SCHEMA IF NOT EXISTS order_service
+    AUTHORIZATION postgres;
+
+-- Table: order_service.products
+
+-- DROP TABLE IF EXISTS order_service.products;
+
+CREATE TABLE IF NOT EXISTS order_service.products
+(
+    id bigint NOT NULL GENERATED ALWAYS AS IDENTITY ( INCREMENT 1 START 1 MINVALUE 1 MAXVALUE 9223372036854775807 CACHE 1 ),
+    name character varying(75) COLLATE pg_catalog."default" NOT NULL,
+    price double precision NOT NULL,
+    stocks integer NOT NULL,
+    CONSTRAINT products_pkey PRIMARY KEY (id)
+)
+
+    TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS order_service.products
+    OWNER to postgres;
+
+
+CREATE TABLE IF NOT EXISTS order_service.orders
+(
+    id bigint NOT NULL GENERATED ALWAYS AS IDENTITY ( INCREMENT 1 START 1 MINVALUE 1 MAXVALUE 9223372036854775807 CACHE 1 ),
+    customer_id integer NOT NULL,
+    order_date time with time zone NOT NULL,
+    total_amount double precision NOT NULL,
+    CONSTRAINT orders_pkey PRIMARY KEY (id)
+)
+
+    TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS order_service.orders
+    OWNER to postgres;
+
+
+CREATE TABLE IF NOT EXISTS order_service.order_products
+(
+    id bigint NOT NULL GENERATED ALWAYS AS IDENTITY ( INCREMENT 1 START 1 MINVALUE 1 MAXVALUE 9223372036854775807 CACHE 1 ),
+    order_id integer NOT NULL,
+    product_id integer NOT NULL,
+    quantity integer NOT NULL,
+    price double precision NOT NULL,
+
+    CONSTRAINT order_products_pkey PRIMARY KEY (id),
+    CONSTRAINT fk_op_order_id FOREIGN KEY (order_id)
+        REFERENCES order_service.orders (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+        NOT VALID,
+    CONSTRAINT fk_op_products_id FOREIGN KEY (product_id)
+        REFERENCES order_service.products (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+)
+
+    TABLESPACE pg_default;
+
+
+
+-- Table: order_service.payments
+
+-- DROP TABLE IF EXISTS order_service.payments;
+
+CREATE TABLE IF NOT EXISTS order_service.payments
+(
+    id bigint NOT NULL GENERATED ALWAYS AS IDENTITY ( INCREMENT 1 START 1 MINVALUE 1 MAXVALUE 9223372036854775807 CACHE 1 ),
+    order_id integer NOT NULL,
+    payment_method character varying COLLATE pg_catalog."default" NOT NULL,
+    amount double precision NOT NULL,
+    payment_date time with time zone NOT NULL,
+    CONSTRAINT payments_pkey PRIMARY KEY (id),
+    CONSTRAINT fk_p_order_id FOREIGN KEY (order_id)
+        REFERENCES order_service.orders (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+        NOT VALID
+)
+
+    TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS order_service.payments
+    OWNER to postgres;

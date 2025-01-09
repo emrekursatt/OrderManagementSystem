@@ -57,15 +57,17 @@ public class JwtTokenProvider {
 
     private void saveCustomerPrincipalInRedis(CustomerPrincipal customerPrincipal) {
         try {
-            String customerKey = "user:" + customerPrincipal.getId();
+            String customerKey = "customer:" + customerPrincipal.getId();
 
             // JSON formatına dönüştür ve Redis'e kaydet
             String customerPrincipalJson = objectMapper.writeValueAsString(Map.of(
-                    "userId", customerPrincipal.getId(),
+                    "customerId", customerPrincipal.getId(),
                     "status", customerPrincipal.getCustomerStatus(),
                     "username", customerPrincipal.getUsername(),
                     "email", customerPrincipal.getEmail(),
-                    "enabled", customerPrincipal.isEnabled()
+                    "enabled", customerPrincipal.isEnabled(),
+                    "orderCount" , customerPrincipal.getOrderCount(),
+                    "discountRate", customerPrincipal.getDiscountRate()
             ));
 
             // Redis’e kaydetme işlemi

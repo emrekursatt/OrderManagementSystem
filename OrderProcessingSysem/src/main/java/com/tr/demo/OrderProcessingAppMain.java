@@ -8,9 +8,9 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 @SpringBootApplication
 @EnableJpaAuditing
 @EnableDiscoveryClient
-public class CustomerManagementAppMain {
+public class OrderProcessingAppMain {
     public static void main(String[] args) {
-        SpringApplication.run(CustomerManagementAppMain.class, args);
+        SpringApplication.run(OrderProcessingAppMain.class, args);
 
     }
 }

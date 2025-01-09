@@ -1,0 +1,9 @@
+dependencies {
+    implementation libs.postgres
+    implementation libs.springBootDataJpa
+    implementation libs.springBootStarterSecurity
+    implementation libs.springBootDataRedis
+    implementation libs.eurekaClient
+    implementation libs.springBootAdminClientWeb
+    implementation libs.swaggerApi
+}

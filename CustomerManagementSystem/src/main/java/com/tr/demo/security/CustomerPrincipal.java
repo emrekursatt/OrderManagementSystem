@@ -27,6 +27,8 @@ public class CustomerPrincipal  implements UserDetails {
     private Collection<? extends GrantedAuthority> authorities;
     private boolean enabled;
     private String email;
+    private Integer orderCount;
+    private Double discountRate;
 
     public static CustomerPrincipal constructCustomerPrincipal(final CustomerEntity customerEntity) {
         return CustomerPrincipal.builder()
@@ -38,6 +40,8 @@ public class CustomerPrincipal  implements UserDetails {
                 .authorities(Collections.emptyList())
                 .enabled(customerEntity.getEnabled())
                 .email(customerEntity.getEmail())
+                .orderCount(customerEntity.getOrderCount())
+                .discountRate(customerEntity.getTiersEntity().getDiscountRate())
                 .build();
     }
 

@@ -1,3 +1,8 @@
 rootProject.name = 'OrderManagementSystem'
 include 'CustomerManagementSystem'
+include 'EurekaServerService'
+include 'APIGatewayService'
+include 'OrderProcessingSysem'
+include 'OrderProcessingSysem:repository'
+findProject(':OrderProcessingSysem:repository')?.name = 'repository'
 

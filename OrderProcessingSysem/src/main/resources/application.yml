@@ -1,12 +1,12 @@
 ###### Server port ########
 server:
-  port: 6060  # ${SERVICE_PORT}
+  port: 6061  # ${SERVICE_PORT}
   servlet:
-    context-path: /customer
+    context-path: /order
 
 spring:
   application:
-    name: customer-service
+    name: order-service
   cloud:
     config:
       enabled: false
@@ -26,7 +26,7 @@ spring:
       hibernate:
         hbm2ddl:
           auto: none
-        default_schema: customer_service
+        default_schema: order_service
     show-sql: true
   boot:
     admin:
@@ -57,18 +57,16 @@ springdoc:
     path: /v3/api-docs
   swagger-ui:
     path: /swagger-ui.html
-    url: http://localhost/customer/v3/api-docs
+    url: http://localhost/order/v3/api-docs
 
 management:
-   endpoints:
+  endpoints:
     web:
       exposure:
         include: "*"
-   endpoint:
+  endpoint:
     health:
       show-details: always
 
 security:
-  jwt-expiration-in-ms: 1200000
   jwt-secret: order-management-2024-new-secret-key-project
-  jwt-refresh-expiration-in-ms: 1200000
