@@ -149,12 +149,10 @@ public class OrdersServiceTest {
         CustomerPrincipalModel customerWith10PercentDiscount = getCustomerPrincipalModel(2L, 15, 10.0);
         CustomerPrincipalModel customerWith20PercentDiscount = getCustomerPrincipalModel(3L, 25, 20.0);
 
-        // Act
         OrderListResponse responseNoDiscount = ordersService.createOrder(request, PaymentsMethodEnum.CREDIT_CARD, customerWithNoDiscount);
         OrderListResponse response10PercentDiscount = ordersService.createOrder(request, PaymentsMethodEnum.CREDIT_CARD, customerWith10PercentDiscount);
         OrderListResponse response20PercentDiscount = ordersService.createOrder(request, PaymentsMethodEnum.CREDIT_CARD, customerWith20PercentDiscount);
 
-        // Assert
         assertEquals(100.0, responseNoDiscount.getOrders().get(0).getTotalAmount());
         assertEquals(90.0, response10PercentDiscount.getOrders().get(0).getTotalAmount());
         assertEquals(80.0, response20PercentDiscount.getOrders().get(0).getTotalAmount());
