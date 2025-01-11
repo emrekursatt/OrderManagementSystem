@@ -37,6 +37,7 @@ public class AuthenticationService {
         SecurityContextHolder.getContext().setAuthentication(authentication);
         final CustomerPrincipal customerPrincipal = (CustomerPrincipal) authentication.getPrincipal();
         publishResetFailLoginCountEvent(customerPrincipal);
+
         return JwtAuthenticationResponse.builder()
                 .tokenType(BEARER)
                 .accessToken(jwtTokenProvider.generateToken(authentication))

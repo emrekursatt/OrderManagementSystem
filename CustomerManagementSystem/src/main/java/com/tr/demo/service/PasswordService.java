@@ -35,6 +35,7 @@ public class PasswordService {
         assertUserStatus(usersEntity.getStatus());
         PasswordUtil.assertPasswordIsValid(changePasswordRequest.getNewPassword());
         if (String.valueOf(principal.getId()).equalsIgnoreCase(changePasswordRequest.getNewPassword())) {
+            log.error("Password is same with id");
             throw new PasswordSameWithIdException();
         }
         assertCurrentPasswordIsTrue(principal, changePasswordRequest);
@@ -47,6 +48,7 @@ public class PasswordService {
         final List<Integer> userStatuses = Arrays.asList(BLOCKED.getStatus(),
                 PASSIVE_BY_ADMIN.getStatus());
         if (userStatuses.contains(status)) {
+            log.error("User status is not active");
             throw new ResetPasswordStatusException();
         }
     }

@@ -17,6 +17,7 @@ import com.tr.demo.repository.OrdersRepository;
 import com.tr.demo.repository.PaymentsRepository;
 import com.tr.demo.repository.ProductsRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Service;
 
@@ -26,6 +27,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class OrdersService {
 
     private final OrdersRepository ordersRepository;
@@ -62,17 +64,22 @@ public class OrdersService {
                     .customerId(Math.toIntExact(customerPrincipalModel.getCustomerId()))
                     .totalAmount(totalAmount)
                     .orderDate(OffsetDateTime.now())
+                    .customerEmail(customerPrincipalModel.getEmail())
                     .build();
             ordersRepository.save(order);
 
-            paymentsRepository.save(PaymentsEntity.builder()
+            log.info("Order created with id: {}", order.getId());
+
+            PaymentsEntity payments = paymentsRepository.save(PaymentsEntity.builder()
                     .orderEntity(order)
                     .paymentMethod(paymentsMethodEnum.getValue())
                     .paymentDate(OffsetDateTime.now())
                     .amount(totalAmount)
                     .build());
 
-            ordersProductRepository.save(OrdersProductEntity.builder()
+            log.info("Payment created with id: {}", payments.getId());
+
+            OrdersProductEntity orderProducts = ordersProductRepository.save(OrdersProductEntity.builder()
                     .ordersEntity(order)
                     .productsEntity(productEntity)
                     .quantity(product.getQuantity())
@@ -81,14 +88,18 @@ public class OrdersService {
                     .discountRate(discountRate)
                     .build());
 
+            log.info("Order product created with id: {}", orderProducts.getId());
+
             response.add(CreateOrderResponse.builder()
                     .customerName(customerPrincipalModel.getCustomerName())
                     .totalAmount(totalAmount)
                     .paymentType(paymentsMethodEnum.getValue())
                     .build());
 
+
             OrderRabbitMessage message = new OrderRabbitMessage(order.getId(), customerPrincipalModel.getCustomerId(), order.getTotalAmount());
             rabbitTemplate.convertAndSend("order.exchange", "order.created", message);
+            log.info("Order message sent to RabbitMQ with order id: {}", order.getId());
 
         });
 

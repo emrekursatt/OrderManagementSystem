@@ -30,6 +30,10 @@ public class OrdersEntity {
     private OffsetDateTime orderDate;
 
     @NotNull
+    @Column(name = "customer_email", nullable = false)
+    private String customerEmail;
+
+    @NotNull
     @Column(name = "total_amount", nullable = false)
     private Double totalAmount;
 

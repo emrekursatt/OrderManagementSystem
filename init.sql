@@ -47,6 +47,9 @@ ALTER TABLE IF EXISTS customer_service.customer
 
 
 
+
+
+
 -- Table: customer_service.tiers_history
 
 -- DROP TABLE IF EXISTS customer_service.tiers_history;
