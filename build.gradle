@@ -18,9 +18,7 @@ allprojects {
     targetCompatibility = JavaVersion.VERSION_21
 }
 
-test {
-    useJUnit()
-    useTestNG()
+tasks.withType(Test).configureEach {
     useJUnitPlatform()
 }
 
@@ -38,6 +36,10 @@ subprojects {
         dependencies {
             classpath("org.springframework.boot:spring-boot-gradle-plugin:${versions.springBoot}")
         }
+    }
+
+    tasks.withType(Test) {
+        useJUnitPlatform()
     }
 }
 

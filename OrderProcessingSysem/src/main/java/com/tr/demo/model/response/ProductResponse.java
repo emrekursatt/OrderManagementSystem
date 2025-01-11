@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class CreateProductResponse {
+public class ProductResponse {
 
     private String productName;
     private int stocks;

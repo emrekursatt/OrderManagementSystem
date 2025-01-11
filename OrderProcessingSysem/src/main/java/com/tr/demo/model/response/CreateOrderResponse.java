@@ -6,6 +6,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.joda.time.DateTime;
 
+import java.util.Date;
+
 @Data
 @Builder
 @AllArgsConstructor
@@ -16,4 +18,8 @@ public class CreateOrderResponse {
     private DateTime orderDate;
     private double totalAmount;
     private String paymentType;
+
+    public DateTime getOrderDate() {
+        return new DateTime();
+    }
 }
