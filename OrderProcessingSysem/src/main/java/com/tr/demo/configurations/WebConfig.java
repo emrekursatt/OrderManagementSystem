@@ -1,6 +1,7 @@
 package com.tr.demo.configurations;
 
 import com.tr.demo.resolver.CustomerPrincipalArgumentResolver;
+import lombok.NonNull;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -17,7 +18,7 @@ public class WebConfig implements WebMvcConfigurer {
     }
 
     @Override
-    public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
+    public void addArgumentResolvers(@NonNull List<HandlerMethodArgumentResolver> resolvers) {
         resolvers.add(customerPrincipalArgumentResolver);
     }
 }

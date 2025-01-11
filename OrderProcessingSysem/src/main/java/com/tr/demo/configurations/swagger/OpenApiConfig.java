@@ -13,10 +13,10 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @OpenAPIDefinition(
         info = @Info(title = "Order Service API", version = "v0.01", description = "API Documentation"),
-        security = @SecurityRequirement(name = "CustomerAuth")
+        security = @SecurityRequirement(name = "BearerCustomer") // SecurityScheme ile aynı name
 )
 @SecurityScheme(
-        name = "BearerCustomer",
+        name = "BearerCustomer", // SecurityRequirement ile aynı name
         type = SecuritySchemeType.HTTP,
         scheme = "bearer",
         bearerFormat = "JWT",

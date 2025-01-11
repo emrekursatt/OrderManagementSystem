@@ -2,6 +2,7 @@ package com.tr.demo.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tr.demo.configuration.properties.JwtProperties;
+import com.tr.demo.entity.CustomerEntity;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.http.HttpServletRequest;
@@ -59,7 +60,7 @@ public class JwtTokenProvider {
         try {
             String customerKey = "customer:" + customerPrincipal.getId();
 
-            // JSON formatına dönüştür ve Redis'e kaydet
+            // JSON formatına dönüştür ve sonrasında Redis'e kaydet
             String customerPrincipalJson = objectMapper.writeValueAsString(Map.of(
                     "customerId", customerPrincipal.getId(),
                     "status", customerPrincipal.getCustomerStatus(),
@@ -73,6 +74,36 @@ public class JwtTokenProvider {
 
             // Redis’e kaydetme işlemi
             redisTemplate.opsForValue().set(customerKey, customerPrincipalJson, jwtProperties.getJwtExpirationInMs(), TimeUnit.MILLISECONDS);
+
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to serialize  CustomerPrincipal", e);
+        }
+    }
+
+
+    public void updateCustomerPrincipalInRedis(CustomerEntity customerEntity) {
+        try {
+            String customerKey = "customer:" + customerEntity.getId();
+            // Redis'ten JSON formatında CustomerPrincipal bilgisini al
+            String customerPrincipalJson = redisTemplate.opsForValue().get(customerKey);
+
+            if (customerPrincipalJson != null) {
+                // JSON'u bir Map'e dönüştür
+                Map<String, Object> customerData = objectMapper.readValue(customerPrincipalJson, Map.class);
+
+                // Bilgileri güncelle
+                customerData.put("discountRate", customerEntity.getTiersEntity().getDiscountRate());
+                customerData.put("orderCount", customerEntity.getOrderCount());
+                customerData.put("tierName", customerEntity.getTiersEntity().getName());
+
+                // Güncellenmiş veriyi tekrar JSON formatına çevir
+                String updatedCustomerJson = objectMapper.writeValueAsString(customerData);
+
+                // Redis'e geri yaz
+                redisTemplate.opsForValue().set(customerKey, updatedCustomerJson, jwtProperties.getJwtExpirationInMs(), TimeUnit.MILLISECONDS);
+            } else {
+                throw new RuntimeException("Redis'te bu kullanıcı için token bilgisi bulunamadı. Customer Name: " + customerEntity.getName());
+            }
 
         } catch (Exception e) {
             throw new RuntimeException("Failed to serialize  CustomerPrincipal", e);

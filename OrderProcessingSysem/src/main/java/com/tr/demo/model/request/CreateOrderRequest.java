@@ -12,9 +12,6 @@ import java.util.List;
 @NoArgsConstructor
 public class CreateOrderRequest {
 
-    private Long customerId;
     @NotEmpty
     private List<OrderProductRequest> products;
-    @NonNull
-    private String paymentMethod;
 }

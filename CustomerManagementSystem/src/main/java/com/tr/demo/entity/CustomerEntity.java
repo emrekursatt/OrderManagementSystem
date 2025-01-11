@@ -36,7 +36,7 @@ public class CustomerEntity extends BaseAuditableEntity {
     private String email;
 
     @NotNull
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @OnDelete(action = OnDeleteAction.RESTRICT)
     @JoinColumn(name = "tier_id", nullable = false)
     private TiersEntity tiersEntity;

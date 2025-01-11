@@ -3,6 +3,7 @@ package com.tr.demo.configuration;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tr.demo.configuration.properties.JwtProperties;
 import io.jsonwebtoken.security.Keys;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
 import org.springframework.core.io.buffer.DataBuffer;
@@ -15,8 +16,10 @@ import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
 import javax.crypto.SecretKey;
+import java.time.Duration;
 import java.util.List;
 
+@Slf4j
 @Component
 public class AuthenticationFilter extends AbstractGatewayFilterFactory<AuthenticationFilter.Config> {
     private final RedisTemplate<String, String> redisTemplate;
@@ -45,11 +48,11 @@ public class AuthenticationFilter extends AbstractGatewayFilterFactory<Authentic
         return (exchange, chain) -> {
             String path = exchange.getRequest().getPath().toString();
 
+
             // Whitelist edilen rotalar için doğrulama atlanır
             if (path.startsWith("/customer") || isSwaggerPath(path)) {
                 return chain.filter(exchange);
             }
-
             // Authorization header'ını al ve doğrula
             String token = exchange.getRequest().getHeaders().getFirst(HttpHeaders.AUTHORIZATION);
             if (token == null || token.isEmpty()) {
@@ -68,32 +71,39 @@ public class AuthenticationFilter extends AbstractGatewayFilterFactory<Authentic
     }
 
     private Mono<Void> validateTokenWithAuthService(String token, ServerWebExchange exchange) {
-        WebClient webClient = WebClient.create("http://customer-service/validate");
+        WebClient webClient = WebClient.builder()
+                .baseUrl("http://localhost/customer/validate") // Doğru endpoint
+                .build();
 
-        return webClient.post()
-                .header("Authorization", "Bearer " + token)
+        return webClient.get()
+                .uri(uriBuilder -> uriBuilder.queryParam("token", token).build())
                 .retrieve()
                 .bodyToMono(Boolean.class)
                 .flatMap(isValid -> {
                     if (!isValid) {
+                        log.error("Invalid token detected for token: {}", token);
                         return this.onError(exchange, "Invalid token", HttpStatus.UNAUTHORIZED);
                     }
+                    log.info("Token is valid.");
                     return Mono.empty();
                 })
+                .timeout(Duration.ofSeconds(5)) // Timeout ekliyoruz
                 .onErrorResume(e -> {
-                    // Eğer AuthService çağrısında bir hata oluşursa
+                    log.error("Error occurred while calling Customer Service: {}", e.getMessage());
                     return this.onError(exchange, "Customer service error: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
                 });
     }
-
 
     private boolean isSwaggerPath(String path) {
         return SWAGGER_WHITELIST.stream().anyMatch(path::contains);
     }
 
+
     private Mono<Void> onError(ServerWebExchange exchange, String err, HttpStatus httpStatus) {
         exchange.getResponse().setStatusCode(httpStatus);
-        DataBuffer buffer = exchange.getResponse().bufferFactory().wrap(err.getBytes());
+        exchange.getResponse().getHeaders().add(HttpHeaders.CONTENT_TYPE, "application/json");
+        String errorMessage = String.format("{\"error\": \"%s\"}", err);
+        DataBuffer buffer = exchange.getResponse().bufferFactory().wrap(errorMessage.getBytes());
         return exchange.getResponse().writeWith(Mono.just(buffer));
     }
 

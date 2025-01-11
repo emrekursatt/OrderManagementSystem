@@ -18,6 +18,12 @@ allprojects {
     targetCompatibility = JavaVersion.VERSION_21
 }
 
+test {
+    useJUnit()
+    useTestNG()
+    useJUnitPlatform()
+}
+
 subprojects {
     apply from: "${rootDir}/dependencies.gradle"
     tasks.withType(JavaCompile).configureEach {
@@ -71,6 +77,11 @@ allprojects {
         implementation libs.feignCore
         implementation libs.eurekaClient
         implementation libs.cloudStarterConfig
+        implementation libs.mockitoJunit
+        implementation libs.mockitoCore
+        implementation libs.junitJupiterApi
+        implementation libs.junitJupiterEngine
+        implementation libs.testStarter
     }
 }
 

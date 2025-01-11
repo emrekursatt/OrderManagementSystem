@@ -35,4 +35,10 @@ public class OrdersProductEntity {
     @Column(name = "price", nullable = false)
     private Double price;
 
+    @Column(name = "total_price")
+    private Double totalPrice;
+
+    @Column(name = "discount_rate")
+    private Double discountRate;
+
 }

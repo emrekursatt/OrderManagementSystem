@@ -47,6 +47,10 @@ ALTER TABLE IF EXISTS customer_service.customer
 
 
 
+-- Table: customer_service.tiers_history
+
+-- DROP TABLE IF EXISTS customer_service.tiers_history;
+
 CREATE TABLE IF NOT EXISTS customer_service.tiers_history
 (
     id bigint NOT NULL GENERATED ALWAYS AS IDENTITY ( INCREMENT 1 START 1 MINVALUE 1 MAXVALUE 9223372036854775807 CACHE 1 ),
@@ -65,10 +69,10 @@ CREATE TABLE IF NOT EXISTS customer_service.tiers_history
         ON UPDATE CASCADE
         ON DELETE RESTRICT
         NOT VALID,
-    CONSTRAINT fk_th_previous_tier_id FOREIGN KEY (new_tier_id)
+    CONSTRAINT fk_th_previous_tier_id FOREIGN KEY (previous_tier_id)
         REFERENCES customer_service.tiers (id) MATCH SIMPLE
-        ON UPDATE CASCADE
-        ON DELETE RESTRICT
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
         NOT VALID
 )
 

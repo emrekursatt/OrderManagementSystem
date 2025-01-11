@@ -2,6 +2,7 @@ package com.tr.demo.advice;
 
 import com.tr.demo.advice.constans.ErrorCodes;
 import com.tr.demo.advice.exception.BusinessLogicException;
+import com.tr.demo.advice.exception.OrderLimitExceededException;
 import com.tr.demo.advice.exception.ResourceNotFoundException;
 import com.tr.demo.model.error.Error;
 import lombok.extern.slf4j.Slf4j;
@@ -18,7 +19,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Error> handleException(Exception e) {
         log.error("An unknown exception occurred!", e);
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+        return ResponseEntity.status(HttpStatus.BAD_GATEWAY)
                 .body(constructError(ErrorCodes.UNKNOWN_ERROR, e.getMessage()));
     }
 
@@ -32,6 +33,12 @@ public class GlobalExceptionHandler {
     public ResponseEntity<Object> handleBusinessLogicException(BusinessLogicException e) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(constructError(ErrorCodes.NOT_FOUND, e.getMessage()));
+    }
+
+    @ExceptionHandler(OrderLimitExceededException.class)
+    public ResponseEntity<Object> handleOrderLimitException(OrderLimitExceededException e) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(constructError(ErrorCodes.ORDER_LIMIT_EXCEEDED, e.getMessage()));
     }
 
     private Error constructError(final int code, final String message) {

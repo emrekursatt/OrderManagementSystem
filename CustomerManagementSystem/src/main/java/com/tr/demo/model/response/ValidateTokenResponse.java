@@ -1,5 +1,6 @@
 package com.tr.demo.model.response;
 
+import com.fasterxml.jackson.annotation.JsonRootName;
 import lombok.*;
 
 @Getter
@@ -7,6 +8,7 @@ import lombok.*;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@JsonRootName(value = "validated")
 public class ValidateTokenResponse {
 
     private Boolean validated;

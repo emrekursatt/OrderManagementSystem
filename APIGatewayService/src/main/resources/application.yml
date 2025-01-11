@@ -70,28 +70,21 @@ spring:
           predicates:
             - Path=/order/**
           filters:
+            - RewritePath=/order/(?<segment>.*), /order/${segment}
             - name: AuthenticationFilter
             - name: CircuitBreaker
               args:
                 name: order
                 fallbackUri: forward:/fallback/fallbackForOrderService
 
-springdoc:
-  api-docs:
-    enabled: true
-    path: /v3/api-docs
-  swagger-ui:
-    enabled: true
-    config-url: /v3/api-docs/swagger-config
-
-  management:
-    endpoints:
-      web:
-        exposure:
-          include: "*"
-    endpoint:
-      health:
-        show-details: always
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      show-details: always
 
 
 eureka:
@@ -101,9 +94,13 @@ eureka:
     register-with-eureka: true
     fetch-registry: true
   instance:
+    prefer-ip-address: false
     hostname: localhost
-    prefer-ip-address: true
 
 
 security:
   jwt-secret: be-career-2024-new-secret-key-project
+
+logging:
+  level:
+    org.springframework.cloud.gateway: DEBUG

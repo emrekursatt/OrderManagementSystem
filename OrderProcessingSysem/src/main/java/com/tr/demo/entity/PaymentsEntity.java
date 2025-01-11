@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import org.joda.time.DateTime;
 
+import java.time.OffsetDateTime;
 import java.time.OffsetTime;
 
 @Getter
@@ -35,6 +36,6 @@ public class PaymentsEntity {
 
     @NotNull
     @Column(name = "payment_date", nullable = false)
-    private DateTime paymentDate;
+    private OffsetDateTime paymentDate;
 
 }

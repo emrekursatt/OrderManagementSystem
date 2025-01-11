@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import org.joda.time.DateTime;
 
+import java.time.OffsetDateTime;
 import java.time.OffsetTime;
 
 @Getter
@@ -26,7 +27,7 @@ public class OrdersEntity {
 
     @NotNull
     @Column(name = "order_date", nullable = false)
-    private DateTime orderDate;
+    private OffsetDateTime orderDate;
 
     @NotNull
     @Column(name = "total_amount", nullable = false)

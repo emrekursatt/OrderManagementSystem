@@ -20,9 +20,10 @@ public class AuthenticationController {
     private final AuthenticationService authenticationService;
 
     @GetMapping("/validate")
-    public ResponseEntity<ValidateTokenResponse> validate(@RequestParam final String token) {
-        return ResponseEntity.ok(ValidateTokenResponse.builder()
-                .validated(authenticationService.validate(token)).build());
+    public ResponseEntity<Boolean> validate(@RequestParam final String token) {
+        ValidateTokenResponse build = ValidateTokenResponse.builder()
+                .validated(authenticationService.validate(token)).build();
+        return ResponseEntity.ok(build.getValidated());
     }
 
     @PostMapping("/login")
