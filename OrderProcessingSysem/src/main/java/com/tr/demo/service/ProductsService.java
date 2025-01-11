@@ -18,9 +18,8 @@ public class ProductsService {
     private final ProductsRepository productsRepository;
 
     public ProductListResponse getAllProducts() {
-        List<ProductsEntity> all = productsRepository.findAll();
         List<ProductResponse> responseList = new ArrayList<>();
-        all.forEach(productsEntity ->
+        productsRepository.findAll().forEach(productsEntity ->
                 responseList.add(
                         ProductResponse.builder()
                 .productName(productsEntity.getName()).price(productsEntity.getPrice()).stocks(productsEntity.getStocks()).build()));
