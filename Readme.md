@@ -75,8 +75,8 @@ Bu testler, işlevlerin doğru çalıştığından emin olmak için JUnit ve Moc
 ### Zamanlanmış Görevler
 
 - **@EnableScheduling ve Spring Scheduler**:
-    - Projede, belirli aralıklarla çalışan zamanlanmış görevler bulunmaktadır.
-    - Örneğin, `TierNotifications` sınıfında yer alan `notifyCustomers` metodu, müşteri seviyelerinin düzenli kontrol edilmesi ve gerekli bilgilendirmelerin yapılması için her 10 saniyede bir çalışmaktadır:
+    - Projede, belirli aralıklarla çalışan zamanlanmış görev olarak TierNotifications sınıfı bulunmaktadır.r.
+    - `TierNotifications` sınıfında yer alan `notifyCustomers` metodu, müşteri seviyelerinin düzenli kontrol edilmesi ve gerekli bilgilendirmelerin yapılması için her 10 saniyede bir çalışmaktadır:
       ```java
       @Slf4j
       @Component
@@ -124,10 +124,10 @@ Bu testler, işlevlerin doğru çalıştığından emin olmak için JUnit ve Moc
 1. Projeyi IDE'de açın (Önerilen: IntelliJ IDEA).
 2. Gradle yapılandırmasının doğru bir şekilde yüklendiğinden emin olun.
 3. Aşağıdaki ana sınıfları sırasıyla çalıştırın:
-    - `CustomerManagementSystemApplication`
-    - `OrderProcessingSystemApplication`
     - `EurekaServerApplication`
     - `APIGatewayApplication`
+    - `CustomerManagementSystemApplication`
+    - `OrderProcessingSystemApplication`
 
 ### 4. Servislerin İzlenmesi ve API Dökümantasyonu
 
