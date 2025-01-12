@@ -31,7 +31,7 @@ public class ProductController {
     public  ResponseEntityWrapper<ProductListResponse> getAllProducts(){
         BaseResponse<ProductListResponse> response = new BaseResponse<>();
         response.setData(productsService.getAllProducts());
-        response.setMessage("Product added successfully");
+        response.setMessage("Product listed successfully");
         return new ResponseEntityWrapper<>(response, HttpStatus.OK);
     }
 

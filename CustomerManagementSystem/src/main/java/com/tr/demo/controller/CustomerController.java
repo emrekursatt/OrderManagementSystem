@@ -30,7 +30,7 @@ public class CustomerController {
         BaseResponse<UserAllResponse> baseResponse = new BaseResponse<>();
         UserAllResponse userByUserName = customerService.getUserByUserName(username);
         baseResponse.setData(userByUserName);
-        baseResponse.setMessage("User found successfully");
+        baseResponse.setMessage("Customer found successfully");
         return new ResponseEntityWrapper<>(baseResponse, HttpStatus.OK);
     }
 
@@ -41,7 +41,6 @@ public class CustomerController {
     public ResponseEntityWrapper<String> registerUser(@AuthenticationPrincipal final CustomerPrincipal userPrincipal,
                                                       @RequestBody final RegisterRequest registerRequest) {
         BaseResponse<String> baseResponse = new BaseResponse<>();
-        registrationService.registerUser(registerRequest, userPrincipal);
         baseResponse.setData(registrationService.registerUser(registerRequest, userPrincipal));
         baseResponse.setMessage("Customer registered successfully");
         return new ResponseEntityWrapper<>(baseResponse, HttpStatus.OK);

@@ -10,12 +10,14 @@ import com.tr.demo.model.CustomerPrincipalModel;
 import com.tr.demo.model.OrderRabbitMessage;
 import com.tr.demo.model.enums.PaymentsMethodEnum;
 import com.tr.demo.model.request.CreateOrderRequest;
+import com.tr.demo.model.request.OrderProductRequest;
 import com.tr.demo.model.response.CreateOrderResponse;
 import com.tr.demo.model.response.OrderListResponse;
 import com.tr.demo.repository.OrdersProductRepository;
 import com.tr.demo.repository.OrdersRepository;
 import com.tr.demo.repository.PaymentsRepository;
 import com.tr.demo.repository.ProductsRepository;
+import com.tr.demo.resolver.CustomerPrincipalArgumentResolver;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -24,6 +26,7 @@ import org.springframework.stereotype.Service;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -37,13 +40,10 @@ public class OrdersService {
     private final OrdersProductRepository ordersProductRepository;
 
 
-    public OrderListResponse    createOrder(CreateOrderRequest request , PaymentsMethodEnum paymentsMethodEnum , CustomerPrincipalModel customerPrincipalModel) {
+    public CreateOrderResponse createOrder(OrderProductRequest product , PaymentsMethodEnum paymentsMethodEnum , CustomerPrincipalModel customerPrincipalModel) {
 
-        if (request.getProducts().size() > 9)
-            throw new OrderLimitExceededException();
-
-        List<CreateOrderResponse> response = new ArrayList<>();
-        request.getProducts().forEach(product -> {
+        // paymentsMethodEnum gönderilen enum yoksa hata verecek.
+        PaymentsMethodEnum.valueOf(paymentsMethodEnum.name());
 
             ProductsEntity productEntity = productsRepository.findByName(product.getProductName())
                     .orElseThrow(ResourceNotFoundException::new);
@@ -72,7 +72,7 @@ public class OrdersService {
 
             PaymentsEntity payments = paymentsRepository.save(PaymentsEntity.builder()
                     .orderEntity(order)
-                    .paymentMethod(paymentsMethodEnum.getValue())
+                    .paymentMethod(Objects.requireNonNull(PaymentsMethodEnum.fromValue(paymentsMethodEnum.getValue())).getValue())
                     .paymentDate(OffsetDateTime.now())
                     .amount(totalAmount)
                     .build());
@@ -90,21 +90,18 @@ public class OrdersService {
 
             log.info("Order product created with id: {}", orderProducts.getId());
 
-            response.add(CreateOrderResponse.builder()
-                    .customerName(customerPrincipalModel.getCustomerName())
-                    .totalAmount(totalAmount)
-                    .paymentType(paymentsMethodEnum.getValue())
-                    .build());
 
 
             OrderRabbitMessage message = new OrderRabbitMessage(order.getId(), customerPrincipalModel.getCustomerId(), order.getTotalAmount());
             rabbitTemplate.convertAndSend("order.exchange", "order.created", message);
             log.info("Order message sent to RabbitMQ with order id: {}", order.getId());
 
-        });
 
-        return  OrderListResponse.builder()
-                .orders(response)
+        return  CreateOrderResponse.builder()
+                .customerName(customerPrincipalModel.getCustomerName())
+                .totalAmount(totalAmount)
+                .paymentType(paymentsMethodEnum.getValue())
+                .discountRate(discountRate)
                 .build();
     }
 

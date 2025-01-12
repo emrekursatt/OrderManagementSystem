@@ -9,7 +9,7 @@ public class CustomerAlreadyRegisteredException extends RuntimeException {
     private final int code;
 
     public CustomerAlreadyRegisteredException() {
-        super("User already registered with given customer id");
+        super("Customer already registered with given username or email");
         this.code = ErrorCodes.CUSTOMER_ALREADY_REGISTERED;
     }
 }

@@ -56,6 +56,9 @@ public class CustomerService {
                 .email(usersEntity.getEmail())
                 .enabled(usersEntity.getEnabled())
                 .status(CustomerStatusEnums.fromValue(usersEntity.getStatus()).name())
+                .discountRate(usersEntity.getTiersEntity().getDiscountRate())
+                .tierName(usersEntity.getTiersEntity().getName())
+                .orderCount(usersEntity.getOrderCount() == null ? 0 : usersEntity.getOrderCount())
                 .build();
     }
 
@@ -95,4 +98,6 @@ public class CustomerService {
         customers.forEach(customer -> log.info("log.info(You have placed 9 orders with us. Buy one more stuff and you will be promoted to Gold customer and enjoy 10% discounts!) Customer :  {}", customer.getUsername()));
         System.out.println("Sent mail to customers ");
     }
+
+
 }

@@ -1,18 +1,20 @@
-package com.tr.demo.service;
 
 import com.tr.demo.advice.exception.OrderLimitExceededException;
 import com.tr.demo.entity.OrdersEntity;
+import com.tr.demo.entity.OrdersProductEntity;
 import com.tr.demo.entity.PaymentsEntity;
 import com.tr.demo.entity.ProductsEntity;
 import com.tr.demo.model.CustomerPrincipalModel;
 import com.tr.demo.model.enums.PaymentsMethodEnum;
 import com.tr.demo.model.request.CreateOrderRequest;
 import com.tr.demo.model.request.OrderProductRequest;
+import com.tr.demo.model.response.CreateOrderResponse;
 import com.tr.demo.model.response.OrderListResponse;
 import com.tr.demo.repository.OrdersProductRepository;
 import com.tr.demo.repository.OrdersRepository;
 import com.tr.demo.repository.PaymentsRepository;
 import com.tr.demo.repository.ProductsRepository;
+import com.tr.demo.service.OrdersService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -20,6 +22,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -55,67 +58,62 @@ public class OrdersServiceTest {
 
     @Test
     void shouldCreateOrderSuccessfully() {
-        // Arrange
-        CreateOrderRequest request = CreateOrderRequest.builder()
-                .products(List.of(
-                        OrderProductRequest.builder().productName("Product1").quantity(2).build(),
-                        OrderProductRequest.builder().productName("Product2").quantity(1).build()
-                ))
-                .build();
+        OrderProductRequest request = OrderProductRequest.builder()
+                .productName("Product1").quantity(2).build();
 
         CustomerPrincipalModel customer = getCustomerPrincipalModel(1L, 5, 0.0);
 
-        ProductsEntity product1 = getProductEntity(1L, "Product1", 100.0, 10);
-        ProductsEntity product2 = getProductEntity(2L, "Product2", 200.0, 5);
+        ProductsEntity product = getProductEntity(1L, "Product1", 100.0, 10);
 
-        when(productsRepository.findByName("Product1")).thenReturn(Optional.of(product1));
-        when(productsRepository.findByName("Product2")).thenReturn(Optional.of(product2));
+        when(productsRepository.findByName("Product1")).thenReturn(Optional.of(product));
 
-        // Act
-        OrderListResponse response = ordersService.createOrder(request, PaymentsMethodEnum.CREDIT_CARD, customer);
+        OrdersEntity savedOrder = OrdersEntity.builder()
+                .id(1L)
+                .customerId(Math.toIntExact(customer.getCustomerId()))
+                .totalAmount(200.0)
+                .build();
 
-        // Assert
+        when(ordersRepository.save(any(OrdersEntity.class))).thenReturn(savedOrder);
+
+        PaymentsEntity savedPayment = PaymentsEntity.builder()
+                .id(1L)
+                .orderEntity(savedOrder)
+                .paymentMethod(PaymentsMethodEnum.CREDIT_CARD.getValue())
+                .paymentDate(OffsetDateTime.now())
+                .amount(200.0)
+                .build();
+
+        when(paymentsRepository.save(any(PaymentsEntity.class))).thenReturn(savedPayment);
+
+        OrdersProductEntity savedOrderProduct = OrdersProductEntity.builder()
+                .id(1L)
+                .ordersEntity(savedOrder)
+                .productsEntity(product)
+                .quantity(2)
+                .price(100.0)
+                .totalPrice(200.0)
+                .discountRate(0.0)
+                .build();
+
+        when(ordersProductRepository.save(any(OrdersProductEntity.class))).thenReturn(savedOrderProduct);
+
+        CreateOrderResponse response = ordersService.createOrder(request, PaymentsMethodEnum.CREDIT_CARD, customer);
+
         assertNotNull(response);
-        assertEquals(2, response.getOrders().size());
-        verify(productsRepository, times(2)).save(any(ProductsEntity.class));
-        verify(ordersRepository, times(2)).save(any(OrdersEntity.class));
-        verify(paymentsRepository, times(2)).save(any(PaymentsEntity.class));
-        verify(ordersProductRepository, times(2)).save(any());
+        assertEquals(200.0, response.getTotalAmount());
+        assertEquals("Product1", request.getProductName());
+        verify(productsRepository).save(any(ProductsEntity.class));
+        verify(ordersRepository).save(any(OrdersEntity.class));
+        verify(paymentsRepository).save(any(PaymentsEntity.class));
+        verify(ordersProductRepository).save(any(OrdersProductEntity.class)); // Doğru çalıştığını kontrol etmek için
     }
 
-    @Test
-    void shouldThrowExceptionWhenOrderLimitExceeded() {
-        // Arrange
-        CreateOrderRequest request = CreateOrderRequest.builder()
-                .products(List.of(
-                        OrderProductRequest.builder().productName("Product1").quantity(1).build(),
-                        OrderProductRequest.builder().productName("Product2").quantity(1).build(),
-                        OrderProductRequest.builder().productName("Product3").quantity(1).build(),
-                        OrderProductRequest.builder().productName("Product4").quantity(1).build(),
-                        OrderProductRequest.builder().productName("Product5").quantity(1).build(),
-                        OrderProductRequest.builder().productName("Product6").quantity(1).build(),
-                        OrderProductRequest.builder().productName("Product7").quantity(1).build(),
-                        OrderProductRequest.builder().productName("Product8").quantity(1).build(),
-                        OrderProductRequest.builder().productName("Product9").quantity(1).build(),
-                        OrderProductRequest.builder().productName("Product10").quantity(1).build()
-                ))
-                .build();
 
-        CustomerPrincipalModel customer = getCustomerPrincipalModel(1L, 5, 0.0);
-
-        // Act & Assert
-        assertThrows(OrderLimitExceededException.class, () ->
-                ordersService.createOrder(request, PaymentsMethodEnum.CREDIT_CARD, customer));
-    }
 
     @Test
     void shouldCalculateTotalAmountWithDiscount() {
-        // Arrange
-        CreateOrderRequest request = CreateOrderRequest.builder()
-                .products(List.of(
-                        OrderProductRequest.builder().productName("Product1").quantity(2).build()
-                ))
-                .build();
+        OrderProductRequest request = OrderProductRequest.builder()
+                .productName("Product1").quantity(2).build();
 
         CustomerPrincipalModel customer = getCustomerPrincipalModel(1L, 15, 10.0);
 
@@ -123,23 +121,50 @@ public class OrdersServiceTest {
 
         when(productsRepository.findByName("Product1")).thenReturn(Optional.of(product));
 
+        OrdersEntity savedOrder = OrdersEntity.builder()
+                .id(1L)
+                .customerId(Math.toIntExact(customer.getCustomerId()))
+                .totalAmount(180.0) // 10% indirim uygulanmış tutar
+                .build();
+        when(ordersRepository.save(any(OrdersEntity.class))).thenReturn(savedOrder);
+
+        PaymentsEntity savedPayment = PaymentsEntity.builder()
+                .id(1L)
+                .orderEntity(savedOrder)
+                .paymentMethod("CASH")
+                .paymentDate(OffsetDateTime.now())
+                .amount(180.0)
+                .build();
+        when(paymentsRepository.save(any(PaymentsEntity.class))).thenReturn(savedPayment);
+
+        OrdersProductEntity savedOrderProduct = OrdersProductEntity.builder()
+                .id(1L)
+                .ordersEntity(savedOrder)
+                .productsEntity(product)
+                .quantity(2)
+                .price(100.0)
+                .totalPrice(180.0)
+                .discountRate(10.0) // İndirim oranı
+                .build();
+        when(ordersProductRepository.save(any(OrdersProductEntity.class))).thenReturn(savedOrderProduct);
+
         // Act
-        OrderListResponse response = ordersService.createOrder(request, PaymentsMethodEnum.CASH, customer);
+        CreateOrderResponse response = ordersService.createOrder(request, PaymentsMethodEnum.CASH, customer);
 
         // Assert
-        assertNotNull(response);
-        assertEquals(180.0, response.getOrders().get(0).getTotalAmount());
-        verify(productsRepository).save(any(ProductsEntity.class));
+        assertNotNull(response); // Yanıt boş olmamalı
+        assertEquals(180.0, response.getTotalAmount()); // İndirim uygulanmış toplam tutarı kontrol et
+        assertEquals("Product1", request.getProductName()); // Ürün adını kontrol et
+        verify(productsRepository).save(any(ProductsEntity.class)); // Ürün kaydedildi mi?
+        verify(ordersRepository).save(any(OrdersEntity.class)); // Sipariş kaydedildi mi?
+        verify(paymentsRepository).save(any(PaymentsEntity.class)); // Ödeme kaydedildi mi?
+        verify(ordersProductRepository).save(any(OrdersProductEntity.class)); // Sipariş-ürün kaydedildi mi?
     }
 
     @Test
     void shouldApplyDiscountBasedOnOrderCount() {
-        // Arrange
-        CreateOrderRequest request = CreateOrderRequest.builder()
-                .products(List.of(
-                        OrderProductRequest.builder().productName("Product1").quantity(1).build()
-                ))
-                .build();
+        OrderProductRequest request = OrderProductRequest.builder()
+                .productName("Product1").quantity(2).build();
 
         ProductsEntity product = getProductEntity(1L, "Product1", 100.0, 10);
 
@@ -149,13 +174,48 @@ public class OrdersServiceTest {
         CustomerPrincipalModel customerWith10PercentDiscount = getCustomerPrincipalModel(2L, 15, 10.0);
         CustomerPrincipalModel customerWith20PercentDiscount = getCustomerPrincipalModel(3L, 25, 20.0);
 
-        OrderListResponse responseNoDiscount = ordersService.createOrder(request, PaymentsMethodEnum.CREDIT_CARD, customerWithNoDiscount);
-        OrderListResponse response10PercentDiscount = ordersService.createOrder(request, PaymentsMethodEnum.CREDIT_CARD, customerWith10PercentDiscount);
-        OrderListResponse response20PercentDiscount = ordersService.createOrder(request, PaymentsMethodEnum.CREDIT_CARD, customerWith20PercentDiscount);
+        OrdersEntity savedOrder = OrdersEntity.builder()
+                .id(1L)
+                .customerId(1)
+                .totalAmount(200.0)
+                .build();
+        when(ordersRepository.save(any(OrdersEntity.class))).thenReturn(savedOrder);
 
-        assertEquals(100.0, responseNoDiscount.getOrders().get(0).getTotalAmount());
-        assertEquals(90.0, response10PercentDiscount.getOrders().get(0).getTotalAmount());
-        assertEquals(80.0, response20PercentDiscount.getOrders().get(0).getTotalAmount());
+        PaymentsEntity savedPayment = PaymentsEntity.builder()
+                .id(1L)
+                .orderEntity(savedOrder)
+                .paymentMethod("CREDIT_CARD")
+                .paymentDate(OffsetDateTime.now())
+                .amount(200.0)
+                .build();
+        when(paymentsRepository.save(any(PaymentsEntity.class))).thenReturn(savedPayment);
+
+        OrdersProductEntity savedOrderProduct = OrdersProductEntity.builder()
+                .id(1L)
+                .ordersEntity(savedOrder)
+                .productsEntity(product)
+                .quantity(2)
+                .price(100.0)
+                .totalPrice(200.0)
+                .discountRate(10.0)
+                .build();
+        when(ordersProductRepository.save(any(OrdersProductEntity.class))).thenReturn(savedOrderProduct);
+
+        // Act
+        CreateOrderResponse responseNoDiscount = ordersService.createOrder(request, PaymentsMethodEnum.CREDIT_CARD, customerWithNoDiscount);
+        CreateOrderResponse response10PercentDiscount = ordersService.createOrder(request, PaymentsMethodEnum.CREDIT_CARD, customerWith10PercentDiscount);
+        CreateOrderResponse response20PercentDiscount = ordersService.createOrder(request, PaymentsMethodEnum.CREDIT_CARD, customerWith20PercentDiscount);
+
+        // Assert
+        assertEquals(200.0, responseNoDiscount.getTotalAmount()); // İndirim yok
+        assertEquals(180.0, response10PercentDiscount.getTotalAmount()); // 10% indirim
+        assertEquals(160.0, response20PercentDiscount.getTotalAmount()); // 20% indirim
+
+        // Verify
+        verify(productsRepository, times(3)).save(any(ProductsEntity.class)); // Ürün 3 kez kaydedildi mi?
+        verify(ordersRepository, times(3)).save(any(OrdersEntity.class)); // Sipariş 3 kez kaydedildi mi?
+        verify(paymentsRepository, times(3)).save(any(PaymentsEntity.class)); // Ödeme 3 kez kaydedildi mi?
+        verify(ordersProductRepository, times(3)).save(any(OrdersProductEntity.class)); // Sipariş-ürün 3 kez kaydedildi mi?
     }
 
     // Helper methods to create mock data

@@ -2,171 +2,148 @@ CREATE SCHEMA IF NOT EXISTS customer_service
     AUTHORIZATION postgres;
 
 
-CREATE TABLE IF NOT EXISTS customer_service.tiers
+create table if not exists customer_service.tiers
 (
-    id bigint NOT NULL GENERATED ALWAYS AS IDENTITY ( INCREMENT 1 START 1 MINVALUE 1 MAXVALUE 9223372036854775807 CACHE 1 ),
-    name character varying(50) COLLATE pg_catalog."default" NOT NULL,
-    required_orders integer NOT NULL,
-    discount_rate double precision NOT NULL,
-    CONSTRAINT tiers_pkey1 PRIMARY KEY (id)
-)
+    id              bigint generated always as identity,
+    name            varchar(50)      not null,
+    required_orders integer          not null,
+    discount_rate   double precision not null,
+    constraint tiers_pkey1
+    primary key (id),
+    constraint ui_name
+    unique (name)
+    );
 
-    TABLESPACE pg_default;
+comment on constraint ui_name on customer_service.tiers is 'name';
 
-ALTER TABLE IF EXISTS customer_service.tiers
-    OWNER to postgres;
+alter table customer_service.tiers
+    owner to postgres;
 
-
-
-CREATE TABLE IF NOT EXISTS customer_service.customer
+create table if not exists customer_service.customer
 (
-    id bigint NOT NULL GENERATED ALWAYS AS IDENTITY ( INCREMENT 1 START 1 MINVALUE 1 MAXVALUE 9223372036854775807 CACHE 1 ),
-    username character varying(100) COLLATE pg_catalog."default" NOT NULL,
-    name character varying COLLATE pg_catalog."default" NOT NULL,
-    email character varying(255) COLLATE pg_catalog."default" NOT NULL,
-    tier_id integer NOT NULL,
-    order_count integer,
-    created_at bigint NOT NULL,
-    updated_at bigint,
-    password character varying(255) COLLATE pg_catalog."default" NOT NULL,
-    enabled boolean NOT NULL,
-    status smallint NOT NULL,
-    fail_login_count integer NOT NULL,
-    CONSTRAINT tiers_pkey PRIMARY KEY (id),
-    CONSTRAINT fk_c_tier_id FOREIGN KEY (tier_id)
-        REFERENCES customer_service.tiers (id) MATCH SIMPLE
-        ON UPDATE CASCADE
-        ON DELETE RESTRICT
-        NOT VALID
-)
+    id               bigint generated always as identity,
+    username         varchar(100) not null,
+    name             varchar      not null,
+    email            varchar(255) not null,
+    tier_id          integer      not null,
+    order_count      integer,
+    created_at       bigint       not null,
+    updated_at       bigint,
+    password         varchar(255) not null,
+    enabled          boolean      not null,
+    status           smallint     not null,
+    fail_login_count integer      not null,
+    constraint tiers_pkey
+    primary key (id),
+    constraint ui_username
+    unique (username),
+    constraint ui_email
+    unique (email),
+    constraint fk_c_tier_id
+    foreign key (tier_id) references customer_service.tiers
+    on update cascade on delete restrict
+    );
 
-    TABLESPACE pg_default;
+alter table customer_service.customer
+    owner to postgres;
 
-ALTER TABLE IF EXISTS customer_service.customer
-    OWNER to postgres;
-
-
-
-
-
-
--- Table: customer_service.tiers_history
-
--- DROP TABLE IF EXISTS customer_service.tiers_history;
-
-CREATE TABLE IF NOT EXISTS customer_service.tiers_history
+create table if not exists customer_service.tiers_history
 (
-    id bigint NOT NULL GENERATED ALWAYS AS IDENTITY ( INCREMENT 1 START 1 MINVALUE 1 MAXVALUE 9223372036854775807 CACHE 1 ),
-    customer_id integer NOT NULL,
-    previous_tier_id integer NOT NULL,
-    new_tier_id integer NOT NULL,
-    change_date time with time zone DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT tiers_history_pkey PRIMARY KEY (id),
-    CONSTRAINT fk_th_customer_id FOREIGN KEY (customer_id)
-        REFERENCES customer_service.customer (id) MATCH SIMPLE
-        ON UPDATE CASCADE
-        ON DELETE RESTRICT
-        NOT VALID,
-    CONSTRAINT fk_th_new_tier_id FOREIGN KEY (new_tier_id)
-        REFERENCES customer_service.tiers (id) MATCH SIMPLE
-        ON UPDATE CASCADE
-        ON DELETE RESTRICT
-        NOT VALID,
-    CONSTRAINT fk_th_previous_tier_id FOREIGN KEY (previous_tier_id)
-        REFERENCES customer_service.tiers (id) MATCH SIMPLE
-        ON UPDATE NO ACTION
-        ON DELETE NO ACTION
-        NOT VALID
-)
+    id               bigint generated always as identity,
+    customer_id      integer not null,
+    previous_tier_id integer not null,
+    new_tier_id      integer not null,
+    change_date      time with time zone default CURRENT_TIMESTAMP,
+    primary key (id),
+    constraint fk_th_customer_id
+    foreign key (customer_id) references customer_service.customer
+    on update cascade on delete restrict,
+    constraint fk_th_new_tier_id
+    foreign key (new_tier_id) references customer_service.tiers
+    on update cascade on delete restrict,
+    constraint fk_th_previous_tier_id
+    foreign key (previous_tier_id) references customer_service.tiers
+    );
 
-    TABLESPACE pg_default;
+alter table customer_service.tiers_history
+    owner to postgres;
 
-ALTER TABLE IF EXISTS customer_service.tiers_history
-    OWNER to postgres;
+
+
+INSERT INTO customer_service.tiers (name, required_orders, discount_rate)
+VALUES ('Regular', 0, 0);
+
+INSERT INTO customer_service.tiers (name, required_orders, discount_rate)
+VALUES ('Gold', 10, 10);
+
+INSERT INTO customer_service.tiers (name, required_orders, discount_rate)
+VALUES ('Platinum', 20, 20);
 
 
 
 CREATE SCHEMA IF NOT EXISTS order_service
     AUTHORIZATION postgres;
 
--- Table: order_service.products
 
--- DROP TABLE IF EXISTS order_service.products;
 
-CREATE TABLE IF NOT EXISTS order_service.products
+create table if not exists order_service.products
 (
-    id bigint NOT NULL GENERATED ALWAYS AS IDENTITY ( INCREMENT 1 START 1 MINVALUE 1 MAXVALUE 9223372036854775807 CACHE 1 ),
-    name character varying(75) COLLATE pg_catalog."default" NOT NULL,
-    price double precision NOT NULL,
-    stocks integer NOT NULL,
-    CONSTRAINT products_pkey PRIMARY KEY (id)
-)
+    id     bigint generated always as identity,
+    name   varchar(75)      not null,
+    price  double precision not null,
+    stocks integer          not null,
+    primary key (id),
+    constraint iu_name
+    unique (name)
+    );
 
-    TABLESPACE pg_default;
+alter table order_service.products
+    owner to postgres;
 
-ALTER TABLE IF EXISTS order_service.products
-    OWNER to postgres;
-
-
-CREATE TABLE IF NOT EXISTS order_service.orders
+create table if not exists order_service.orders
 (
-    id bigint NOT NULL GENERATED ALWAYS AS IDENTITY ( INCREMENT 1 START 1 MINVALUE 1 MAXVALUE 9223372036854775807 CACHE 1 ),
-    customer_id integer NOT NULL,
-    order_date time with time zone NOT NULL,
-    total_amount double precision NOT NULL,
-    CONSTRAINT orders_pkey PRIMARY KEY (id)
-)
+    id             bigint generated always as identity,
+    customer_id    integer             not null,
+    order_date     time with time zone not null,
+    total_amount   double precision    not null,
+    customer_email varchar(255),
+    primary key (id)
+    );
 
-    TABLESPACE pg_default;
+alter table order_service.orders
+    owner to postgres;
 
-ALTER TABLE IF EXISTS order_service.orders
-    OWNER to postgres;
-
-
-CREATE TABLE IF NOT EXISTS order_service.order_products
+create table if not exists order_service.payments
 (
-    id bigint NOT NULL GENERATED ALWAYS AS IDENTITY ( INCREMENT 1 START 1 MINVALUE 1 MAXVALUE 9223372036854775807 CACHE 1 ),
-    order_id integer NOT NULL,
-    product_id integer NOT NULL,
-    quantity integer NOT NULL,
-    price double precision NOT NULL,
+    id             bigint generated always as identity,
+    order_id       integer             not null,
+    payment_method varchar             not null,
+    amount         double precision    not null,
+    payment_date   time with time zone not null,
+    primary key (id),
+    constraint fk_p_order_id
+    foreign key (order_id) references order_service.orders
+    );
 
-    CONSTRAINT order_products_pkey PRIMARY KEY (id),
-    CONSTRAINT fk_op_order_id FOREIGN KEY (order_id)
-        REFERENCES order_service.orders (id) MATCH SIMPLE
-        ON UPDATE NO ACTION
-        ON DELETE NO ACTION
-        NOT VALID,
-    CONSTRAINT fk_op_products_id FOREIGN KEY (product_id)
-        REFERENCES order_service.products (id) MATCH SIMPLE
-        ON UPDATE NO ACTION
-        ON DELETE NO ACTION
-)
+alter table order_service.payments
+    owner to postgres;
 
-    TABLESPACE pg_default;
-
-
-
--- Table: order_service.payments
-
--- DROP TABLE IF EXISTS order_service.payments;
-
-CREATE TABLE IF NOT EXISTS order_service.payments
+create table if not exists order_service.order_products
 (
-    id bigint NOT NULL GENERATED ALWAYS AS IDENTITY ( INCREMENT 1 START 1 MINVALUE 1 MAXVALUE 9223372036854775807 CACHE 1 ),
-    order_id integer NOT NULL,
-    payment_method character varying COLLATE pg_catalog."default" NOT NULL,
-    amount double precision NOT NULL,
-    payment_date time with time zone NOT NULL,
-    CONSTRAINT payments_pkey PRIMARY KEY (id),
-    CONSTRAINT fk_p_order_id FOREIGN KEY (order_id)
-        REFERENCES order_service.orders (id) MATCH SIMPLE
-        ON UPDATE NO ACTION
-        ON DELETE NO ACTION
-        NOT VALID
-)
+    id            bigint generated always as identity,
+    order_id      integer          not null,
+    product_id    integer          not null,
+    quantity      integer          not null,
+    price         double precision not null,
+    discount_rate integer,
+    total_price   double precision,
+    primary key (id),
+    constraint fk_op_order_id
+    foreign key (order_id) references order_service.orders,
+    constraint fk_op_products_id
+    foreign key (product_id) references order_service.products
+    );
 
-    TABLESPACE pg_default;
+alter table order_service.order_products
+    owner to postgres;
 
-ALTER TABLE IF EXISTS order_service.payments
-    OWNER to postgres;

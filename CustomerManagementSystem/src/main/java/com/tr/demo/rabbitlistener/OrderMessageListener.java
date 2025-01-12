@@ -1,6 +1,7 @@
-package com.tr.demo.service;
+package com.tr.demo.rabbitlistener;
 
 import com.tr.demo.model.OrderRabbitMessage;
+import com.tr.demo.service.CustomerService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Service;

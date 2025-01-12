@@ -31,12 +31,12 @@ public class RegistrationService {
 
     @Transactional
     public String registerUser(RegisterRequest registerRequest, CustomerPrincipal CustomerPrincipal) {
-        assertUserIsNotExisted(registerRequest.getUserName());
+        assertUserIsNotExisted(registerRequest.getUserName() , registerRequest.getEmail());
         PasswordUtil.assertPasswordIsValid(registerRequest.getPassword());
         Date registerDate = DateTime.now().toDate();
         CustomerEntity customerEntity = createUserEntity(registerRequest, registerDate);
         CustomerEntity savedCustomerEntity = customerEntityRepository.save(customerEntity);
-        log.info("User with customerId : {} is saved", savedCustomerEntity.getUsername());
+        log.info("Customer with customerId : {} is saved", savedCustomerEntity.getUsername());
         return customerEntity.getUsername();
     }
 
@@ -55,9 +55,14 @@ public class RegistrationService {
         return customerEntity;
     }
 
-    private void assertUserIsNotExisted(String userName) {
+    private void assertUserIsNotExisted(String userName , String email) {
+        customerEntityRepository.findByUsername(userName)
+                .ifPresent(userEntity -> {
+                    throw new CustomerAlreadyRegisteredException();
+                });
+
         customerEntityRepository
-                .findByUsername(userName)
+                .findByEmail(email)
                 .ifPresent(userEntity -> {
                     throw new CustomerAlreadyRegisteredException();
                 });

@@ -11,14 +11,14 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class TierNotifications {
 
-    private final CustomerService customerService;
-
-
-    private static final String CRON_EVERY_10_SECONDS = "0/10 * * * * *";
-
-    @Scheduled(cron = CRON_EVERY_10_SECONDS)
-    public void notifyCustomers() {
-        log.info("Notifying customers");
-        customerService.notifyCustomers();
-    }
+//    private final CustomerService customerService;
+//
+//
+//    private static final String CRON_EVERY_10_SECONDS = "0/10 * * * * *";
+//
+//    @Scheduled(cron = CRON_EVERY_10_SECONDS)
+//    public void notifyCustomers() {
+//        log.info("Notifying customers");
+//        customerService.notifyCustomers();
+//    }
 }

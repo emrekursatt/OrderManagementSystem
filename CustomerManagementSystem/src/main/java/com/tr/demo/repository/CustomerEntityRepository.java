@@ -11,5 +11,7 @@ import java.util.Optional;
 public interface CustomerEntityRepository extends JpaRepository<CustomerEntity, Long> {
   Optional<CustomerEntity> findByUsername(String username);
 
+  Optional<CustomerEntity> findByEmail(String email);
+
   List<CustomerEntity> findAllByOrderCount(int orderCount);
 }

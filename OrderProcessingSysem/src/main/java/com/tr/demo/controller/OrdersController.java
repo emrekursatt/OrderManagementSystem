@@ -4,6 +4,7 @@ import com.tr.demo.annotations.CustomerPrincipal;
 import com.tr.demo.model.CustomerPrincipalModel;
 import com.tr.demo.model.enums.PaymentsMethodEnum;
 import com.tr.demo.model.request.CreateOrderRequest;
+import com.tr.demo.model.request.OrderProductRequest;
 import com.tr.demo.model.response.BaseResponse;
 import com.tr.demo.model.response.CreateOrderResponse;
 import com.tr.demo.model.response.OrderListResponse;
@@ -25,11 +26,11 @@ public class OrdersController {
 
 
     @PostMapping("/create-order")
-    public ResponseEntityWrapper<OrderListResponse> createOrder(
+    public ResponseEntityWrapper<CreateOrderResponse> createOrder(
             @Parameter(hidden = true)  @CustomerPrincipal CustomerPrincipalModel customer,
-            @RequestBody CreateOrderRequest request ,
+            @RequestBody OrderProductRequest request ,
             @RequestParam PaymentsMethodEnum paymentMethod) {
-        BaseResponse<OrderListResponse> response = new BaseResponse<>();
+        BaseResponse<CreateOrderResponse> response = new BaseResponse<>();
         response.setData(ordersService.createOrder(request , paymentMethod ,customer));
         response.setMessage("Order created successfully");
         return new ResponseEntityWrapper<>(response, HttpStatus.CREATED);

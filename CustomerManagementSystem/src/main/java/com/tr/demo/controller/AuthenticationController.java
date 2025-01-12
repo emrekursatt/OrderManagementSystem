@@ -32,12 +32,6 @@ public class AuthenticationController {
         return ResponseEntity.ok(authenticationService.authenticate(loginRequest));
     }
 
-    @DeleteMapping("/logout")
-    public ResponseEntity<InvalidateTokenResponse> logout(
-            @RequestHeader(value = AUTHORIZATION) final String authorization) {
-        return ResponseEntity.ok(authenticationService.invalidateToken(authorization));
-    }
-
     @PostMapping("/refresh")
     public ResponseEntity<JwtAuthenticationResponse> refresh(
             @RequestBody final RefreshTokenRequest request) {

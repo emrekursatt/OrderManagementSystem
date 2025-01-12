@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.joda.time.DateTime;
+import org.joda.time.LocalDateTime;
 
 import java.util.Date;
 
@@ -15,11 +15,7 @@ import java.util.Date;
 public class CreateOrderResponse {
 
     private String customerName;
-    private DateTime orderDate;
     private double totalAmount;
+    private double discountRate;
     private String paymentType;
-
-    public DateTime getOrderDate() {
-        return new DateTime();
-    }
 }

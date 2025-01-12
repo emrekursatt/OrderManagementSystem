@@ -10,12 +10,12 @@ public class ApiGatewayController {
 
     @GetMapping("/fallbackForCustomerService")
     public String fallbackForAuth (){
-        return "Customer Service geçici olarak hizmet vermemektedir.";
+        return "Customer Service geçici olarak hizmet vermemektedir.Gateway ve eureka server bağlantıları sağlanıyor.Lütfen 1 dakika sonra tekrar deneyiniz.";
     }
 
 
     @GetMapping("/fallbackForOrderService")
     public String fallbackForExperience (){
-        return "Order Service geçici olarak hizmet vermemektedir.";
+        return "Customer Service geçici olarak hizmet vermemektedir.Gateway ve eureka server bağlantıları sağlanıyor.Lütfen 1 dakika sonra tekrar deneyiniz.";
     }
 }

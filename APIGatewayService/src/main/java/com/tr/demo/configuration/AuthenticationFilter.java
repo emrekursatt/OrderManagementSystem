@@ -81,8 +81,9 @@ public class AuthenticationFilter extends AbstractGatewayFilterFactory<Authentic
                 .bodyToMono(Boolean.class)
                 .flatMap(isValid -> {
                     if (!isValid) {
+                        // Token geçersiz olduğunda özelleştirilmiş hata mesajı
                         log.error("Invalid token detected for token: {}", token);
-                        return this.onError(exchange, "Invalid token", HttpStatus.UNAUTHORIZED);
+                        return this.onError(exchange, "The provided token is invalid. Please provide a valid token.", HttpStatus.UNAUTHORIZED);
                     }
                     log.info("Token is valid.");
                     return Mono.empty();
@@ -90,7 +91,7 @@ public class AuthenticationFilter extends AbstractGatewayFilterFactory<Authentic
                 .timeout(Duration.ofSeconds(5)) // Timeout ekliyoruz
                 .onErrorResume(e -> {
                     log.error("Error occurred while calling Customer Service: {}", e.getMessage());
-                    return this.onError(exchange, "Customer service error: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+                    return this.onError(exchange, "Customer service is currently unavailable. Please try again later.", HttpStatus.INTERNAL_SERVER_ERROR);
                 });
     }
 

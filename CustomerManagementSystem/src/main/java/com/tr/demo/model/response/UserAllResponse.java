@@ -17,4 +17,7 @@ public class UserAllResponse {
     private String email;
     private boolean enabled;
     private String status;
+    private String tierName;
+    private int orderCount;
+    private double discountRate;
 }
