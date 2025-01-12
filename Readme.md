@@ -97,6 +97,37 @@ Bu testler, işlevlerin doğru çalıştığından emin olmak için JUnit ve Moc
 
 ---
 
+## Veritabanı Tasarımı
+
+Proje, iki ana hizmet olan `Customer Service` ve `Order Service` için ayrılmış bir veritabanı tasarımı içermektedir. Bu hizmetler, PostgreSQL kullanılarak yapılandırılmıştır. Her hizmetin veritabanı tabloları ve ilişkileri aşağıda açıklanmıştır:
+
+### Customer Service Veritabanı
+
+1. **Tablolar**:
+    - `customer`: Müşteri bilgilerini saklar. (Kullanıcı adı, şifre, e-posta, vb.)
+    - `tiers`: Müşteri seviyelerini (Regular, Gold, Platinum) yönetir.
+    - `tiers_history`: Müşterilerin seviye geçmişlerini takip eder.
+
+2. **İşlevsellik**:
+    - Müşteri kayıt ve giriş işlemleri.
+    - Müşteri seviyesinin (tier) dinamik olarak güncellenmesi.
+    - İndirim oranlarının seviyeye bağlı olarak yönetilmesi.
+
+### Order Service Veritabanı
+
+1. **Tablolar**:
+    - `orders`: Sipariş bilgilerini saklar.
+    - `order_products`: Siparişlere eklenen ürünleri takip eder.
+    - `payments`: Siparişlerin ödeme yöntemlerini kaydeder. (CREDIT_CARD, PAYPAL, CASH, BANK_TRANSFER)
+    - `products`: Ürün bilgilerini saklar. (Ürün adı, fiyat, stok, vb.)
+
+2. **İşlevsellik**:
+    - Sipariş oluşturma ve takip.
+    - Ürün yönetimi (ekleme, listeleme).
+    - Ödeme işlemlerinin takibi.
+
+---
+
 ## Kurulum ve Çalıştırma Talimatları
 
 ### 1. Gereksinimler
@@ -194,3 +225,10 @@ Bu testler, işlevlerin doğru çalıştığından emin olmak için JUnit ve Moc
 
 ---
 
+## Önemli Not
+
+Docker Compose çalıştırıldığında, `init.sql` dosyası PostgreSQL veritabanında gerekli tabloları ve başlangıç verilerini oluşturacaktır. Bu işlem, veritabanı yapılandırmasını ve ilk yapılandırmaları otomatikleştirir.
+
+**init.sql dosyasının temel işlevleri**:
+- Customer Service ve Order Service için gerekli tabloları oluşturur.
+- Tier seviyelerini (Regular, Gold, Platinum) ve indirim oranlarını tanımlar.
