@@ -46,8 +46,54 @@ Bu proje, bir **Sipariş Yönetim Sistemi** geliştirmeyi amaçlamaktadır. Spri
 4. **Mesajlaşma**:
     - **RabbitMQ**: Asenkron işlemler ve mesajlaşma altyapısı.
 
-5. **Containerizasyon**:
+5. **Test**:
+    - **JUNIT** ve  **Mockito**: Birim ve entegrasyon testleri için.
+
+6. **Containerizasyon**:
     - **Docker ve Docker Compose**: PostgreSQL, Redis ve RabbitMQ gibi bileşenler container olarak yapılandırıldı.
+
+---
+
+## Ek Özellikler
+
+### Test Kapsamı
+
+Proje, aşağıdaki testler ile birim ve entegrasyon testlerini kapsamaktadır:
+- **Order Service Testleri**:
+    - `OrderProductServiceTest`
+    - `OrdersServiceTest`
+    - `ProductsServiceTest`
+
+- **Customer Service Testleri**:
+    - `AuthenticationServiceTest`
+    - `CustomerServiceTest`
+    - `PasswordServiceTest`
+    - `RegistrationServiceTest`
+
+Bu testler, işlevlerin doğru çalıştığından emin olmak için JUnit ve Mockito kullanılarak yazılmıştır.
+
+### Zamanlanmış Görevler
+
+- **@EnableScheduling ve Spring Scheduler**:
+    - Projede, belirli aralıklarla çalışan zamanlanmış görevler bulunmaktadır.
+    - Örneğin, `TierNotifications` sınıfında yer alan `notifyCustomers` metodu, müşteri seviyelerinin düzenli kontrol edilmesi ve gerekli bilgilendirmelerin yapılması için her 10 saniyede bir çalışmaktadır:
+      ```java
+      @Slf4j
+      @Component
+      @RequiredArgsConstructor
+      public class TierNotifications {
+          private final CustomerService customerService;
+  
+          private static final String CRON_EVERY_10_SECONDS = "0/10 * * * * *";
+  
+          @Scheduled(cron = CRON_EVERY_10_SECONDS)
+          public void notifyCustomers() {
+              log.info("Notifying customers");
+              customerService.notifyCustomers();
+          }
+      }
+      ```
+    - Bu işlem, Spring’in zamanlama mekanizması olan `@Scheduled` ile gerçekleştirilmiştir.
 
 ---
 
@@ -65,7 +111,7 @@ Bu proje, bir **Sipariş Yönetim Sistemi** geliştirmeyi amaçlamaktadır. Spri
 1. GitHub'dan projeyi klonlayın:
    ```bash
    git clone https://github.com/emrekursatt/OrderManagementSystem.git
-   cd proje-adi
+   cd OrderManagementSystem
    ```
 
 2. Docker Compose kullanarak PostgreSQL, Redis ve RabbitMQ'yu başlatın:
@@ -78,10 +124,10 @@ Bu proje, bir **Sipariş Yönetim Sistemi** geliştirmeyi amaçlamaktadır. Spri
 1. Projeyi IDE'de açın (Önerilen: IntelliJ IDEA).
 2. Gradle yapılandırmasının doğru bir şekilde yüklendiğinden emin olun.
 3. Aşağıdaki ana sınıfları sırasıyla çalıştırın:
-    - `EurekaServerApplication`
-    - `APIGatewayApplication`
     - `CustomerManagementSystemApplication`
     - `OrderProcessingSystemApplication`
+    - `EurekaServerApplication`
+    - `APIGatewayApplication`
 
 ### 4. Servislerin İzlenmesi ve API Dökümantasyonu
 
