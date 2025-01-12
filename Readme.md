@@ -64,7 +64,7 @@ Bu proje, bir **Sipariş Yönetim Sistemi** geliştirmeyi amaçlamaktadır. Spri
 
 1. GitHub'dan projeyi klonlayın:
    ```bash
-   git clone https://github.com/kullaniciadi/proje-adi.git
+   git clone https://github.com/emrekursatt/OrderManagementSystem.git
    cd proje-adi
    ```
 
@@ -148,4 +148,3 @@ Bu proje, bir **Sipariş Yönetim Sistemi** geliştirmeyi amaçlamaktadır. Spri
 
 ---
 
-Bu README, kullanıcıların projeyi kolayca kurup çalıştırabilmesi ve test edebilmesi için detaylı adımlar sunmaktadır.
