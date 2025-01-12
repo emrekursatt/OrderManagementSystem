@@ -1,4 +1,245 @@
 
+
+# Order Management System
+
+## General Information
+
+This project aims to develop an **Order Management System**. The application, built using Spring Boot, includes core functionalities such as customer management, order processing, and automated discount application. The primary objective is to create a user-friendly and scalable order management system utilizing a modern microservice architecture.
+
+### Key Features
+1. **Customer Management**:
+    - Creating new customers.
+    - Managing customer tiers (Regular, Gold, Platinum).
+    - Automatically upgrading customer tiers based on the number of orders.
+
+2. **Order Processing**:
+    - Allowing customers to place orders.
+    - Finalizing orders with payment status marked as completed by default.
+
+3. **Discount System**:
+    - Applying a 10% discount for Gold customers and a 20% discount for Platinum customers.
+    - Tracking and storing discount information.
+
+4. **Messaging System**:
+    - Asynchronous tier check for customers using RabbitMQ.
+
+---
+
+## Technologies and Architecture
+
+### Technologies and Libraries
+
+1. **Spring Framework**:
+    - **Spring Boot**: Provides the core infrastructure for the application.
+    - **Spring Data JPA**: Used for database operations.
+    - **Spring Security**: Authentication and authorization.
+    - **Spring AMQP (RabbitMQ)**: Messaging between services.
+    - **Spring Scheduler**: Managing scheduled tasks.
+
+2. **Dependencies**:
+    - **Lombok**: Reduces boilerplate code and speeds up development.
+    - **Swagger**: For REST API documentation.
+
+3. **Database and Cache**:
+    - **PostgreSQL**: Handles all database operations.
+    - **Redis**: Used for caching and token management.
+
+4. **Messaging**:
+    - **RabbitMQ**: Supports asynchronous processes and messaging.
+
+5. **Testing**:
+    - **JUnit** and **Mockito**: For unit and integration testing.
+
+6. **Containerization**:
+    - **Docker and Docker Compose**: Configures components like PostgreSQL, Redis, and RabbitMQ as containers.
+
+---
+
+## Additional Features
+
+### Test Coverage
+
+The project includes comprehensive unit and integration tests:
+- **Order Service Tests**:
+    - `OrderProductServiceTest`
+    - `OrdersServiceTest`
+    - `ProductsServiceTest`
+
+- **Customer Service Tests**:
+    - `AuthenticationServiceTest`
+    - `CustomerServiceTest`
+    - `PasswordServiceTest`
+    - `RegistrationServiceTest`
+
+These tests ensure functional correctness using JUnit and Mockito.
+
+### Scheduled Tasks
+
+- **@EnableScheduling and Spring Scheduler**:
+    - The project includes scheduled tasks such as the `TierNotifications` class.
+    - The `notifyCustomers` method in `TierNotifications` runs every 10 seconds to check customer tiers and send notifications:
+      ```java
+      @Slf4j
+      @Component
+      @RequiredArgsConstructor
+      public class TierNotifications {
+          private final CustomerService customerService;
+  
+          private static final String CRON_EVERY_10_SECONDS = "0/10 * * * * *";
+  
+          @Scheduled(cron = CRON_EVERY_10_SECONDS)
+          public void notifyCustomers() {
+              log.info("Notifying customers");
+              customerService.notifyCustomers();
+          }
+      }
+      ```
+    - This task uses Spring's scheduling mechanism with `@Scheduled`.
+
+---
+
+## Database Design
+
+The project features a database design tailored for two main services: `Customer Service` and `Order Service`. Both services are built using PostgreSQL. Below are the tables and relationships for each service:
+
+### Customer Service Database
+
+1. **Tables**:
+    - `customer`: Stores customer information (username, password, email, etc.).
+    - `tiers`: Manages customer tiers (Regular, Gold, Platinum).
+    - `tiers_history`: Tracks customer tier history.
+
+2. **Functionality**:
+    - Handles customer registration and login.
+    - Dynamically updates customer tiers.
+    - Manages discount rates based on tiers.
+
+### Order Service Database
+
+1. **Tables**:
+    - `orders`: Stores order information.
+    - `order_products`: Tracks products added to orders.
+    - `payments`: Records payment methods (CREDIT_CARD, PAYPAL, CASH, BANK_TRANSFER).
+    - `products`: Stores product details (name, price, stock, etc.).
+
+2. **Functionality**:
+    - Creates and tracks orders.
+    - Manages products (add, list).
+    - Tracks payment transactions.
+
+---
+
+## Installation and Execution Instructions
+
+### 1. Requirements
+
+- **Java 21** (JDK 21)
+- **Gradle 9**
+- **Docker and Docker Compose**
+- An IDE (Recommended: IntelliJ IDEA)
+
+### 2. Clone and Setup the Project
+
+1. Clone the project from GitHub:
+   ```bash
+   git clone https://github.com/emrekursatt/OrderManagementSystem.git
+   cd OrderManagementSystem
+   ```
+
+2. Start PostgreSQL, Redis, and RabbitMQ using Docker Compose:
+   ```bash
+   docker-compose up -d
+   ```
+
+### 3. Running the Application
+
+1. Open the project in an IDE (Recommended: IntelliJ IDEA).
+2. Ensure Gradle configurations are properly loaded.
+3. Run the following main classes in order:
+    - `EurekaServerApplication`
+    - `APIGatewayApplication`
+    - `CustomerManagementSystemApplication`
+    - `OrderProcessingSystemApplication`
+
+### 4. Monitoring Services and API Documentation
+
+- [http://localhost/wallboard](http://localhost/wallboard): Monitor service statuses.
+- [http://localhost:8761](http://localhost:8761): Monitor services via Eureka.
+- [Customer Service Swagger](http://localhost/customer/swagger-ui/index.html#/)
+- [Order Service Swagger](http://localhost/order/swagger-ui/index.html#/)
+
+### 5. Application Usage
+
+#### User Registration and Login
+
+- Register a user:
+   ```bash
+   curl -X 'POST' 'http://localhost/customer/api/v1/customer/customer-register'         -H 'accept: */*'         -H 'Content-Type: application/json'         -d '{
+            "userName": "testUser",
+            "password": "newPassword12345",
+            "email": "testUser@gmail.com",
+            "name": "Test Customer Name"
+        }'
+   ```
+
+- Login:
+   ```bash
+   curl -X 'POST' 'http://localhost/customer/login'         -H 'accept: */*'         -H 'Content-Type: application/json'         -d '{
+            "userName": "testUser",
+            "password": "newPassword12345"
+        }'
+   ```
+
+#### Product Management
+
+- Add a new product:
+   ```bash
+   curl -X 'POST' 'http://localhost/order/api/v1/products/add-product'         -H 'Authorization: Bearer TOKEN'         -H 'Content-Type: application/json'         -d '{
+            "productName": "NewTestProduct",
+            "price": 10.5,
+            "stocks": 500
+        }'
+   ```
+
+- List all products:
+   ```bash
+   curl -X 'GET' 'http://localhost/order/api/v1/products/all-product'         -H 'Authorization: Bearer TOKEN'
+   ```
+
+#### Order Management
+
+- Create an order:
+- paymentMethod = CREDIT_CARD, PAYPAL, CASH, BANK_TRANSFER
+   ```bash
+   curl -X 'POST' 'http://localhost/order/api/v1/orders/create-order?paymentMethod=CREDIT_CARD'         -H 'Authorization: Bearer TOKEN'
+   ```
+
+- View orders:
+    - All orders:
+      ```bash
+      curl -X 'GET' 'http://localhost/order/api/v1/orders/all-order-products'            -H 'Authorization: Bearer TOKEN'
+      ```
+
+    - Specific customer orders:
+      ```bash
+      curl -X 'GET' 'http://localhost/order/api/v1/orders/all-order-products/{customerEmail}?customerEmail=testUser%40gmail.com'            -H 'Authorization: Bearer TOKEN'
+      ```
+
+---
+
+## Important Note
+
+When running Docker Compose, the `init.sql` file initializes necessary tables and data in the PostgreSQL database. This automates database configuration and initial setup.
+
+**Key Functions of the `init.sql` file**:
+- Creates tables required for Customer Service and Order Service.
+- Defines tier levels (Regular, Gold, Platinum) and discount rates.
+
+
+
+
+
+
 # Order Management System
 
 ## Genel Bilgi
@@ -208,6 +449,7 @@ Proje, iki ana hizmet olan `Customer Service` ve `Order Service` için ayrılmı
 #### Sipariş Yönetimi
 
 - Sipariş oluşturmak:
+- paymentMethod = CREDIT_CARD, PAYPAL, CASH, BANK_TRANSFER
    ```bash
    curl -X 'POST'      'http://localhost/order/api/v1/orders/create-order?paymentMethod=CREDIT_CARD'      -H 'Authorization: Bearer TOKEN'
    ```
