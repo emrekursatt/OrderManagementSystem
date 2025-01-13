@@ -210,6 +210,9 @@ The project features a database design tailored for two main services: `Customer
 
 - Create an order:
 - paymentMethod = CREDIT_CARD, PAYPAL, CASH, BANK_TRANSFER
+- After an order is created, a message is triggered via RabbitMQ. This message is processed asynchronously by the Customer Service.Customer Service checks the total number of orders placed by the customer. If the 
+  customer's total order count exceeds a specific threshold (e.g., 10 or 20 orders), their tier information is updated accordingly. This process ensures that customer tier progression is dynamically and efficiently 
+  managed in real time.
    ```bash
    curl -X 'POST' 'http://localhost/order/api/v1/orders/create-order?paymentMethod=CREDIT_CARD'         -H 'Authorization: Bearer TOKEN'
    ```
@@ -450,6 +453,9 @@ Proje, iki ana hizmet olan `Customer Service` ve `Order Service` için ayrılmı
 
 - Sipariş oluşturmak:
 - paymentMethod = CREDIT_CARD, PAYPAL, CASH, BANK_TRANSFER
+- Sipariş oluşturulduktan sonra, RabbitMQ üzerinden bir mesaj tetiklenir. Bu mesaj, asenkron bir işlem olarak Customer Service'e iletilir.Customer Service, gelen mesajı işleyerek ilgili müşterinin toplam sipariş 
+  sayısını kontrol eder. Eğer müşterinin sipariş sayısı belirli bir eşiği (örneğin, 10 veya 20 sipariş) aşarsa, müşterinin tier bilgisi güncellenir. Bu işlem sayesinde müşterilerin seviye ilerlemesi dinamik ve gerçek 
+  zamanlı olarak yönetilir.
    ```bash
    curl -X 'POST'      'http://localhost/order/api/v1/orders/create-order?paymentMethod=CREDIT_CARD'      -H 'Authorization: Bearer TOKEN'
    ```
